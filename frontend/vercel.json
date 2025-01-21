@@ -1,0 +1,30 @@
+{
+    "routes":[
+  
+      {
+        "src": "/",
+        "dest": "/"
+      },
+      {
+        "src": "/contact",
+        "dest": "/"
+      },
+      {
+        "src": "/shop",
+        "dest": "/"
+      },
+      {
+        "src": "/register",
+        "dest": "/"
+      },
+      {
+        "src": "/blogs",
+        "dest": "/"
+      },
+      {
+        "src": "/login/.*",
+        "dest": "/"
+      }
+      
+    ]
+  }
