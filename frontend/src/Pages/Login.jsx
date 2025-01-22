@@ -7,23 +7,37 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setError('Email and password are required.');
       return;
     }
-    setError('');
-    console.log("Email:", email);
-    console.log("Password:", password);
-    // Add further login logic here
+
+    try {
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token); // Store token
+        navigate("/"); // Redirect after login
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (error) {
+      setError("Server error. Please try again.");
+    }
   };
 
-  const navigate = useNavigate();
-
   const handleNavigate = () => {
-    navigate('/register');
+    navigate('/register'); // Navigate to register page
   };
 
   return (
@@ -37,12 +51,10 @@ export default function Login() {
             <input
               type="email"
               id="email"
-              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder='Enter your email'
-              className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
+              className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md"
             />
           </div>
 
@@ -51,33 +63,33 @@ export default function Login() {
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder='Enter your password'
-              className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
+              className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute text-gray-500 right-3 top-10 hover:text-gray-700 focus:outline-none"
+              className="absolute text-gray-500 right-3 top-10"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
 
           <div className="flex justify-center pt-3">
-            <button
-              type="submit"
-              className="w-[90%] py-2 text-white bg-black rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-800"
-            >
+            <button type="submit" className="w-[90%] py-2 text-white bg-black rounded-md">
               Login
             </button>
           </div>
+
+          {/* Create Account Button */}
           <div className='flex justify-center pt-2'>
-            <button className='text-blue-800/80 text-[12px]' onClick={handleNavigate}>Create an account.</button>
+            <button className='text-blue-800/80 text-[12px]' onClick={handleNavigate}>
+              Create an account.
+            </button>
           </div>
+
         </form>
       </div>
     </div>

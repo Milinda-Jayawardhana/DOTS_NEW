@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { ColourfulTextDemo } from "../Ui/ColourfullWord/ColourfulTextDemo";
 import Tcount from "../Components/Tcont";
+import Tmaterial from "../Components/Tmaterial";
+import Tsizes from "../Components/Tsizes";
+import Tcolours from "../Components/Tcolours";
 
 export default function Shop() {
   const [popup, setPopup] = useState(null);
@@ -21,7 +24,7 @@ export default function Shop() {
             <ColourfulTextDemo></ColourfulTextDemo>
           </div>
 
-          <div className="flex gap-10 pt-5 justify-evenly">
+          <div className="flex gap-10 pt-10 justify-evenly">
             <div className="w-[150px] h-[160px] bg-gray-700 rounded-lg flex flex-col items-center">
               <div
                 className="relative z-40 w-[150px] h-[150px] bg-white rounded-lg shadow-2xl shadow-stone-950 flex justify-center items-center "
@@ -72,7 +75,7 @@ export default function Shop() {
 
           </div>
 
-          <div className="flex gap-10 pt-5 justify-evenly">
+         {/* <div className="flex gap-10 pt-5 justify-evenly">
             <div className="w-[150px] h-[160px] bg-gray-700 rounded-lg flex flex-col items-center">
               <div
                 className="relative z-40 w-[150px] h-[150px] bg-white rounded-lg shadow-2xl shadow-stone-950 flex justify-center items-center "
@@ -121,7 +124,7 @@ export default function Shop() {
               </div>
             </div>
 
-          </div>
+          </div>*/}
 
 
 
@@ -132,9 +135,12 @@ export default function Shop() {
         </div>
 
         {popup && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center h-screen bg-black bg-opacity-50 backdrop-blur-lg">
-            <Tcount onClose={handlePopupClose} />
-          </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center h-screen bg-opacity-50 backdrop-blur-lg">
+          {popup === 1 && <Tcount onClose={handlePopupClose} />}
+          {popup === 2 && <Tmaterial onClose={handlePopupClose} />}
+          {popup === 3 && <Tcolours onClose={handlePopupClose} />}
+          {popup === 4 && <Tsizes onClose={handlePopupClose} />}
+        </div>
         )}
       </div>
     </div>

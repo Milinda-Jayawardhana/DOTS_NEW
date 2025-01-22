@@ -2,11 +2,13 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const Product = require("./models/productModel");
+const cors = require("cors");
 
 const app = express();
 
 // Middleware to parse JSON
 app.use(express.json());
+app.use(cors());
 
 // Import routes
 const productRoute = require("./Routes/productRoute");
@@ -25,5 +27,6 @@ mongoose
     console.log("Connected to the MongoDB");
   })
   .catch((error) => {
-    console.log("error");
+    console.error("Error connecting to MongoDB:", error); // Log the error
   });
+

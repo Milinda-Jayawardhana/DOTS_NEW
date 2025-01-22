@@ -11,10 +11,13 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Please enter a password"],
     },
-    username: {
+    firstname: {
       type: String,
-      required: [true, "Please enter a username"],
-      unique: true,
+      required: [true, "Please enter your first name"],
+    },
+    lastname: {
+      type: String,
+      required: [true, "Please enter your last name"],
     },
     role: {
       type: String,

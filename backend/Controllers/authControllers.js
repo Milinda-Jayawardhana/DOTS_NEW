@@ -1,21 +1,16 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-**
+
 // Register a new user
 const registerUser = async (req, res) => {
-  const { email, password, username, role } = req.body;
+  const { email, password, firstname, lastname, role } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
-    const usernameExists = await User.findOne({ username });
 
     if (userExists) {
       return res.status(400).json({ message: "Email already exists" });
-    }
-
-    if (usernameExists) {
-      return res.status(400).json({ message: "Username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,7 +18,8 @@ const registerUser = async (req, res) => {
     const user = await User.create({
       email,
       password: hashedPassword,
-      username,
+      firstname,
+      lastname,
       role,
     });
 
@@ -67,7 +63,7 @@ const loginUser = async (req, res) => {
 // Update user details
 const updateUserDetails = async (req, res) => {
   const { id } = req.params;
-  const { email, username, role } = req.body;
+  const { email, firstname, lastname, role } = req.body;
 
   try {
     const user = await User.findById(id);
@@ -77,7 +73,8 @@ const updateUserDetails = async (req, res) => {
     }
 
     user.email = email || user.email;
-    user.username = username || user.username;
+    user.firstname = firstname || user.firstname;
+    user.lastname = lastname || user.lastname;
     user.role = role || user.role;
 
     const updatedUser = await user.save();
@@ -93,3 +90,5 @@ module.exports = {
   loginUser,
   updateUserDetails,
 };
+
+
