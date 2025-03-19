@@ -6,6 +6,8 @@ import Tsizes from "../Components/Tsizes";
 import Tcolours from "../Components/Tcolours";
 import Ttype from "../Components/Ttype";
 import Footer from "../Components/Footer";
+import PreOrder from "../Components/PreOrder";
+import { useNavigate } from "react-router-dom"; 
 
 export default function Shop() {
   const [popup, setPopup] = useState(null);
@@ -14,6 +16,8 @@ export default function Shop() {
   const [selectedColours, setSelectedColours] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedType, setSelectedType] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const handlePopupOpen = (popupNumber) => {
     setPopup(popupNumber);
@@ -56,11 +60,31 @@ export default function Shop() {
 
           {/* Selection Grid */}
           <div className="grid gap-6 justify-items-center grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            <SelectionBox label="Count" imgSrc="/s3.png" onClick={() => handlePopupOpen(1)} />
-            <SelectionBox label="Type" imgSrc="/s5.png" onClick={() => handlePopupOpen(5)} />
-            <SelectionBox label="Material" imgSrc="/s2.png" onClick={() => handlePopupOpen(2)} />
-            <SelectionBox label="Colours" imgSrc="/s1.png" onClick={() => handlePopupOpen(3)} />
-            <SelectionBox label="Sizes" imgSrc="/s4.png" onClick={() => handlePopupOpen(4)} />
+            <SelectionBox
+              label="Count"
+              imgSrc="/s3.png"
+              onClick={() => handlePopupOpen(1)}
+            />
+            <SelectionBox
+              label="Type"
+              imgSrc="/s5.png"
+              onClick={() => handlePopupOpen(5)}
+            />
+            <SelectionBox
+              label="Material"
+              imgSrc="/s2.png"
+              onClick={() => handlePopupOpen(2)}
+            />
+            <SelectionBox
+              label="Colours"
+              imgSrc="/s1.png"
+              onClick={() => handlePopupOpen(3)}
+            />
+            <SelectionBox
+              label="Sizes"
+              imgSrc="/s4.png"
+              onClick={() => handlePopupOpen(4)}
+            />
           </div>
 
           {/* Selected Items Summary */}
@@ -93,25 +117,57 @@ export default function Shop() {
               Reset
             </button>
           </div>
+          <div className="flex items-center justify-center mt-5">
+            <button
+              onClick={() => {
+                const token = localStorage.getItem("token");
+                if (token) {
+                  setShowModal(true);
+                } else {
+                  navigate("/login");
+                }
+              }}
+              className="bg-gray-500 text-white py-2 px-10 rounded"
+            >
+              Place an Order
+            </button>
+          </div>
+
+          {showModal && <PreOrder onClose={() => setShowModal(false)} />}
         </div>
 
         {/* Popups */}
         {popup && (
           <div className="fixed inset-0 z-50 flex items-center justify-center h-screen bg-opacity-50 backdrop-blur-lg">
             {popup === 1 && (
-              <Tcount onClose={handlePopupClose} onSelectCount={setSelectedCount} />
+              <Tcount
+                onClose={handlePopupClose}
+                onSelectCount={setSelectedCount}
+              />
             )}
             {popup === 2 && (
-              <Tmaterial onClose={handlePopupClose} onSelectMaterial={setSelectedMaterial} />
+              <Tmaterial
+                onClose={handlePopupClose}
+                onSelectMaterial={setSelectedMaterial}
+              />
             )}
             {popup === 3 && (
-              <Tcolours onClose={handlePopupClose} onSelectColours={setSelectedColours} />
+              <Tcolours
+                onClose={handlePopupClose}
+                onSelectColours={setSelectedColours}
+              />
             )}
             {popup === 4 && (
-              <Tsizes onClose={handlePopupClose} onSelectSizes={setSelectedSizes} />
+              <Tsizes
+                onClose={handlePopupClose}
+                onSelectSizes={setSelectedSizes}
+              />
             )}
             {popup === 5 && (
-              <Ttype onClose={handlePopupClose} onSelectType={setSelectedType} />
+              <Ttype
+                onClose={handlePopupClose}
+                onSelectType={setSelectedType}
+              />
             )}
           </div>
         )}

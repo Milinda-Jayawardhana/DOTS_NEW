@@ -1,49 +1,52 @@
+const jwt = require('jsonwebtoken');
 const Preorder = require('../Model/preorderModel');
+const { secretKey } = require('../Configuration/jwtConfig');
 
-// Create new preorder
 const createPreorder = async (req, res) => {
-    try {
-        const preorderData = {
-            customerName: req.body.customerName,
-            address: req.body.address,
-            telephone: req.body.telephone,
-            tshirtDetails: {
-                material: req.body.material,
-                printingType: req.body.printingType,
-                quantities: {
-                    s: parseInt(req.body.s || 0),
-                    m: parseInt(req.body.m || 0),
-                    l: parseInt(req.body.l || 0),
-                    xl: parseInt(req.body.xl || 0),
-                    xxl: parseInt(req.body.xxl || 0)
-                }
-            },
-            paymentDetails: {
-                amount: parseFloat(req.body.amount),
-                bankSlip: req.file ? {
-                    filename: req.file.filename,
-                    path: req.file.path
-                } : null
-            }
-        };
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const decoded = jwt.verify(token, secretKey);
+    const userEmail = decoded.email;
 
-        const preorder = new Preorder(preorderData);
-        await preorder.save();
+    // Parse and sanitize quantities array
+    const quantitiesArray = Array.isArray(req.body.quantities)
+      ? req.body.quantities.map(q => ({
+          size: String(q.size),
+          count: parseInt(q.count || 0)
+        }))
+      : [];
 
-        res.status(201).json({
-            success: true,
-            message: 'Order placed successfully',
-            data: preorder
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-    }
+    const preorderData = {
+      userEmail,
+      customerName: req.body.customerName,
+      address: req.body.address,
+      telephone: req.body.telephone,
+      tshirtDetails: {
+        quantity: req.body.quantity,
+        material: req.body.material,
+        printingType: req.body.printingType,
+        quantities: quantitiesArray
+      }
+    };
+
+    const preorder = new Preorder(preorderData);
+    await preorder.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Order placed successfully',
+      data: preorder
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
 };
 
-// Get all preorders
+
+// Get all preorders (for admin)
 const getAllPreorders = async (req, res) => {
     try {
         const preorders = await Preorder.find().sort({ createdAt: -1 });
@@ -60,11 +63,31 @@ const getAllPreorders = async (req, res) => {
     }
 };
 
-// Get single preorder
+// Get preorders for the logged-in user
+const getUserPreorders = async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        const decoded = jwt.verify(token, secretKey);
+        const userEmail = decoded.email;
+
+        const preorders = await Preorder.find({ userEmail }).sort({ createdAt: -1 });
+        res.status(200).json({
+            success: true,
+            count: preorders.length,
+            data: preorders
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Get single preorder by ID
 const getPreorderById = async (req, res) => {
     try {
         const preorder = await Preorder.findById(req.params.id);
-        
         if (!preorder) {
             return res.status(404).json({
                 success: false,
@@ -87,5 +110,6 @@ const getPreorderById = async (req, res) => {
 module.exports = {
     createPreorder,
     getAllPreorders,
-    getPreorderById
+    getPreorderById,
+    getUserPreorders
 };
