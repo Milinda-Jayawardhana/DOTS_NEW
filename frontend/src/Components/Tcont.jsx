@@ -1,27 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
-export default function Tcount({ onClose }) {
-  const [selectedMaterial, setSelectedMaterial] = useState(null); // Allow only one selection
+export default function Counts({ onClose, onSelectCount }) {
+  const [selectedCount, setSelectedCount] = useState(null);
+  const [counts, setCounts] = useState([]);
+  const [role, setRole] = useState(null);
+  const [editingCount, setEditingCount] = useState(null);
 
-  const materials = [
-    "24 - 50",
-    "51 - 100",
-    "101 - 150",
-    "151 - 200",
-    "201 - 250",
-    "251 - 300",
-    "300+",
-  ];
+  useEffect(() => {
+    const updateRole = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          setRole(decoded.role);
+        } catch (error) {
+          console.error("Invalid token:", error);
+          setRole(null);
+        }
+      } else {
+        setRole(null);
+      }
+    };
+    updateRole();
+  }, []);
 
-  // Handle checkbox change (only one can be selected)
-  const handleMaterialChange = (material) => {
-    setSelectedMaterial(material === selectedMaterial ? null : material); // Toggle selection
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/counts");
+        if (response.data && Array.isArray(response.data.tshirtCounts)) {
+          setCounts(response.data.tshirtCounts);
+        } else {
+          console.error("Counts data is not in expected format", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
+    };
+    fetchCounts();
+  }, []);
+
+  const handleCountChange = (count) => {
+    setSelectedCount(count); // Allow only one selection
+  };
+
+  const startEditing = (count) => {
+    setEditingCount({ ...count });
+  };
+
+  const handleUpdate = async () => {
+    if (!editingCount) return;
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/counts/${editingCount._id}`,
+        {
+          name: editingCount.name,
+          price: editingCount.price,
+        }
+      );
+
+      if (response.status === 200) {
+        setCounts((prev) =>
+          prev.map((count) =>
+            count._id === editingCount._id ? editingCount : count
+          )
+        );
+        setEditingCount(null);
+        console.log("Count updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating count:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/api/counts/${id}`);
+      if (response.status === 200) {
+        setCounts((prev) => prev.filter((count) => count._id !== id));
+        console.log("Count deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting count:", error);
+    }
   };
 
   return (
     <div className="inset-0 z-50 flex items-center justify-center">
-      <div className="w-[280px] py-5 bg-white rounded-lg shadow-lg p-4 relative">
-        {/* Close Button */}
+      <div className="relative px-10 py-5 bg-white rounded-lg shadow-lg">
         <button
           className="absolute top-[-10px] right-[-10px] bg-red-500 text-white px-3 py-1 rounded-full"
           onClick={onClose}
@@ -29,58 +97,95 @@ export default function Tcount({ onClose }) {
           X
         </button>
 
-        {/* Title */}
         <p className="text-center text-black font-semibold text-[20px] pb-7">
-          Select Count
+          Select a Count Range
         </p>
 
-        {/* Checkbox List (only one selectable) */}
-        <div className="flex flex-col items-start gap-2 pl-5">
-          {materials.map((material, index) => (
-            <label
-              key={index}
-              className="flex items-center space-x-2 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={selectedMaterial === material}
-                onChange={() => handleMaterialChange(material)}
-                className="hidden" // Hide default checkbox
-              />
-              <div
-                className={`w-5 h-5 flex items-center justify-center border-2 rounded-md transition-all ${
-                  selectedMaterial === material
-                    ? "bg-gray-500 border-gray-500" // Change color when checked
-                    : "border-gray-400"
-                }`}
-              >
-                {selectedMaterial === material && (
-                  <svg
-                    className="w-4 h-4 text-white" // Checkmark icon
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 00-1.414 0L7 13.586 4.707 11.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l9-9a1 1 0 000-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+        <div className="flex flex-col items-start gap-3">
+          {counts.length > 0 ? (
+            counts.map((count) => (
+              <div key={count._id} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  name="countSelection"
+                  checked={selectedCount?._id === count._id}
+                  onChange={() => handleCountChange(count)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <span className="text-black">
+                  {count.name}
+                </span>
+
+                {role === "admin" && (
+                  <div className="ml-4">
+                    <button
+                      onClick={() => startEditing(count)}
+                      className="px-2 py-1 text-white bg-blue-500 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(count._id)}
+                      className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 )}
               </div>
-              <span className="text-black">{material}</span>
-            </label>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500">No counts available.</p>
+          )}
         </div>
 
-        {/* Close & Confirm Buttons */}
+        {editingCount && (
+          <div className="flex items-center mt-4 space-x-2">
+            <input
+              type="text"
+              value={editingCount.name}
+              onChange={(e) =>
+                setEditingCount({
+                  ...editingCount,
+                  name: e.target.value,
+                })
+              }
+              className="px-2 py-1 text-black border rounded"
+            />
+            <input
+              type="number"
+              value={editingCount.price}
+              onChange={(e) =>
+                setEditingCount({
+                  ...editingCount,
+                  price: Number(e.target.value),
+                })
+              }
+              className="w-16 px-2 py-1 text-black border rounded"
+            />
+            <button
+              onClick={handleUpdate}
+              className="px-2 py-1 text-white bg-green-500 rounded"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => setEditingCount(null)}
+              className="px-2 py-1 text-white bg-gray-500 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
         <div className="flex justify-center mt-9">
           <button
             className="px-3 py-2 text-white bg-gray-700 rounded"
             onClick={() => {
-              console.log("Selected Material:", selectedMaterial);
+              onSelectCount(selectedCount); // Send the selected count to Shop
               onClose();
             }}
+            disabled={!selectedCount}
           >
             Confirm
           </button>
