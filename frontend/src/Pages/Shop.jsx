@@ -115,6 +115,8 @@ export default function Shop() {
             )}
           </div>
         )}
+        {/*comment*/
+        }
       </div>
       <Footer />
     </div>
