@@ -1,4 +1,4 @@
-const Tshirt = require('../models/tshirt');
+const Tshirt = require('../Model/tshirt');
 
 // app.post('/product',
 
