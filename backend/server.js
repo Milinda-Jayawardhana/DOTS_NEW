@@ -25,5 +25,5 @@ mongoose
     console.log("Connected to the MongoDB");
   })
   .catch((error) => {
-    console.log("error");
+    console.log("Error:",error);
   });
