@@ -120,6 +120,9 @@ export default function Shop() {
         {
           /*comment test*/
         }
+        {
+          /*comment test 2*/
+        }
       </div>
       <Footer />
     </div>
