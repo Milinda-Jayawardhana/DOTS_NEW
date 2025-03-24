@@ -36,8 +36,8 @@ export default function Footer() {
         <div className=" hidden sm:flex gap-3 lg:gap-7 md:gap-5 sm:gap-3 xl:gap-10 w-[40%] justify-end">
           <a href="#" className="hover:text-gray-400"> About Us   </a>
           <a href="#" className="hover:text-gray-400"> Contact   </a>
-          <a href="#" className="hover:text-gray-400"> Email   </a>
-          <a href="#" className="hover:text-gray-400"> Email   </a>
+          <a href="#" className="hover:text-gray-400"> Shop   </a>
+          <a href="#" className="hover:text-gray-400"> Helps   </a>
 
         </div>
         <div className="flex flex-col items-center ">
@@ -45,8 +45,8 @@ export default function Footer() {
           <div className="flex gap-5 sm:hidden">
             <a href="#" className="hover:text-gray-400"> About Us   </a>
             <a href="#" className="hover:text-gray-400"> Contact   </a>
-            <a href="#" className="hover:text-gray-400"> Email   </a>
-            <a href="#" className="hover:text-gray-400"> Email   </a>
+            <a href="#" className="hover:text-gray-400"> Shop   </a>
+            <a href="#" className="hover:text-gray-400"> Helps   </a>
             
           </div>
           <div className="flex gap-3 sm:hidden">

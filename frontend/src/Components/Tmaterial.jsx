@@ -1,25 +1,30 @@
 import React, { useState } from "react";
 
-export default function Tcount({ onClose }) {
-  const [selectedMaterial, setSelectedMaterial] = useState(null); // Allow only one selection
+export default function Tmaterial({ onClose }) {
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   const materials = [
-    "24 - 50",
-    "51 - 100",
-    "101 - 150",
-    "151 - 200",
-    "201 - 250",
-    "251 - 300",
-    "300+",
+    "Cotton",
+    "Crocodile",
+    "Baby-Crocodile",
+    "Polyester",
+    "Silk",
+    "Denim",
+    "Wool",
   ];
 
-  // Handle checkbox change (only one can be selected)
+  // Handle checkbox change
   const handleMaterialChange = (material) => {
-    setSelectedMaterial(material === selectedMaterial ? null : material); // Toggle selection
+    setSelectedMaterials(
+      (prev) =>
+        prev.includes(material)
+          ? prev.filter((m) => m !== material) // Remove if already selected
+          : [...prev, material] // Add if not selected
+    );
   };
 
   return (
-    <div className="inset-0 z-50 flex items-center justify-center">
+    <div className="inset-0 z-50 flex items-center justify-center ">
       <div className="w-[280px] py-5 bg-white rounded-lg shadow-lg p-4 relative">
         {/* Close Button */}
         <button
@@ -28,13 +33,10 @@ export default function Tcount({ onClose }) {
         >
           X
         </button>
-
-        {/* Title */}
+        {/* Add your content inside the Tcount popup */}
         <p className="text-center text-black font-semibold text-[20px] pb-7">
-          Select Count
+          Select Material
         </p>
-
-        {/* Checkbox List (only one selectable) */}
         <div className="flex flex-col items-start gap-2 pl-5">
           {materials.map((material, index) => (
             <label
@@ -43,18 +45,18 @@ export default function Tcount({ onClose }) {
             >
               <input
                 type="checkbox"
-                checked={selectedMaterial === material}
+                checked={selectedMaterials.includes(material)}
                 onChange={() => handleMaterialChange(material)}
                 className="hidden" // Hide default checkbox
               />
               <div
                 className={`w-5 h-5 flex items-center justify-center border-2 rounded-md transition-all ${
-                  selectedMaterial === material
+                  selectedMaterials.includes(material)
                     ? "bg-gray-500 border-gray-500" // Change color when checked
                     : "border-gray-400"
                 }`}
               >
-                {selectedMaterial === material && (
+                {selectedMaterials.includes(material) && (
                   <svg
                     className="w-4 h-4 text-white" // Checkmark icon
                     viewBox="0 0 20 20"
@@ -78,7 +80,7 @@ export default function Tcount({ onClose }) {
           <button
             className="px-3 py-2 text-white bg-gray-700 rounded"
             onClick={() => {
-              console.log("Selected Material:", selectedMaterial);
+              console.log("Selected Materials:", selectedMaterials);
               onClose();
             }}
           >

@@ -3,7 +3,7 @@ const routes = express.Router();
 
 const {
     createProduct
-} = require("../Controllers/productControllers");
+} = require("../Controlers/productControllers");
 
 routes.post("/create" , createProduct);
 
