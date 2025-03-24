@@ -21,9 +21,9 @@ export default function Contact() {
   };
 
   const info = [
-    { icon: <FaMapMarkerAlt/>, title: "Location", value: "123 Main Street, City" },
-    { icon: <FaPhoneAlt/>, title: "Phone", value: "+123 456 7890" },
-    { icon: <FaEnvelope/>, title: "Email", value: "contact@example.com" },
+    { icon: <FaMapMarkerAlt/>, title: "Location", value: "Boralegamuwa, Colombo" },
+    { icon: <FaPhoneAlt/>, title: "Phone", value: "+94 71 550 8827" },
+    { icon: <FaEnvelope/>, title: "Email", value: "dotsshirt@gmail.com" },
   ];
 
   return (

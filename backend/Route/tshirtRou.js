@@ -3,7 +3,7 @@ const routes = express.Router();
 
 const {
     createTshirt
-} = require("../Controllers/tShirtController");
+} = require("../Controlers/tShirtController");
 
 routes.post("/create" , createTshirt);
 

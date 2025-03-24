@@ -1,29 +1,40 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios for making API requests
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfPassword, setShowConfPassword] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Email and password are required.');
+    if (!email || !password || !firstname || !lastname) {
+      setError('All fields are required.');
       return;
     }
     setError('');
-    console.log("Email:", email);
-    console.log("Password:", password);
-    // Add further login logic here
-  };
+    try {
+      // Make the API call to the backend
+      const response = await axios.post('http://localhost:3000/auth/register', {
+        email,
+        firstname,
+        lastname,
+        password,
+      });
 
-  const navigate = useNavigate();
+      // Handle successful registration
+      console.log('User registered successfully:', response.data);
+      navigate('/login'); // Redirect to login page after successful registration
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred');
+    }
+  };
 
   const handleNavigate = () => {
     navigate('/login');
@@ -31,11 +42,11 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center pt-5 pb-10">
-      <div className="p-8 bg-gray-800 rounded-lg shadow-lg h-[530px] w-[450px]">
+      <div className="p-8 bg-gray-800 rounded-lg shadow-lg h-[480px] w-[450px]">
         <h2 className="mb-6 text-3xl font-bold text-center text-white">Register</h2>
         {error && <p className="mb-4 text-center text-red-500">{error}</p>}
         <form onSubmit={handleSubmit}>
-          <div className='flex gap-4 '>
+          <div className="flex gap-4">
             <div className="mb-4">
               <label htmlFor="firstname" className="block text-[16px] font-semibold text-white">First Name</label>
               <input
@@ -45,8 +56,8 @@ export default function Login() {
                 value={firstname}
                 onChange={(e) => setFirstname(e.target.value)}
                 required
-                placeholder='Enter your firstname'
-                className="block w-full px-4 py-2 mt-1 text-black border  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px] "
+                placeholder="Enter your firstname"
+                className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
               />
             </div>
             <div className="mb-4">
@@ -58,13 +69,12 @@ export default function Login() {
                 value={lastname}
                 onChange={(e) => setLastname(e.target.value)}
                 required
-                placeholder='Enter your lastname'
+                placeholder="Enter your lastname"
                 className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
               />
             </div>
           </div>
-          
-          
+
           <div className="mb-4">
             <label htmlFor="email" className="block text-[16px] font-semibold text-white">Email Address</label>
             <input
@@ -74,7 +84,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder='Enter your email'
+              placeholder="Enter your email"
               className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
             />
           </div>
@@ -82,13 +92,13 @@ export default function Login() {
           <div className="relative mb-4">
             <label htmlFor="password" className="block text-[16px] font-semibold text-white">Password</label>
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               id="password"
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder='Enter your password'
+              placeholder="Enter your password"
               className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
             />
             <button
@@ -100,27 +110,6 @@ export default function Login() {
             </button>
           </div>
 
-          <div className="relative mb-4">
-            <label htmlFor="conform" className="block text-[16px] font-semibold text-white">Conform Password</label>
-            <input
-              type={showConfPassword ? "text" : "password"}
-              id="conformpassword"
-              name="conformpassword"
-              //value={password}
-              //onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder='Enter your password'
-              className="block w-full px-4 py-2 mt-1 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 placeholder:text-[14px]"
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfPassword(!showConfPassword)}
-              className="absolute text-gray-500 right-3 top-10 hover:text-gray-700 focus:outline-none"
-            >
-              {showConfPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-
           <div className="flex justify-center pt-3">
             <button
               type="submit"
@@ -129,8 +118,8 @@ export default function Login() {
               Register
             </button>
           </div>
-          <div className='flex justify-center pt-2'>
-            <button className='text-blue-800/80 text-[12px]' onClick={handleNavigate}>Already have an account?</button>
+          <div className="flex justify-center pt-2">
+            <button className="text-blue-800/80 text-[12px]" onClick={handleNavigate}>Already have an account?</button>
           </div>
         </form>
       </div>
