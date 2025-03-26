@@ -9,6 +9,7 @@ import Contact from './Pages/Contact.jsx';
 import Home from './Pages/Home.jsx';
 import Register from './Pages/Register.jsx';
 import Login from './Pages/Login.jsx';
+import Admin from './Pages/Admin.jsx';
 
 
 
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: '/contact', element: <Contact /> },
       { path: '/register', element: <Register /> },
       { path: '/login', element: <Login /> },
+      { path: '/admin', element: <Admin /> },
    
 
     ],
