@@ -5,6 +5,7 @@ import { TiUserAdd } from "react-icons/ti";
 import { FaCircleUser } from "react-icons/fa6";
 import MobileNav from "./MobileNav";
 import { useState, useEffect } from "react";
+import { BiLogOut } from "react-icons/bi";
 
 export default function Header() {
   const [token, setToken] = useState(null);
@@ -36,7 +37,8 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-4">
             {token ? (
-              <button onClick={handleLogOut}>Log Out</button>
+              <BiLogOut onClick={handleLogOut} className="text-xl cursor-pointer" />
+              
             ) : (
               <>
                 <Link to="/register" className="text-xl hover:text-slate-600">
