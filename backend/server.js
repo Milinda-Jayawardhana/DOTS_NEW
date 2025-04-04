@@ -1,20 +1,32 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const Product = require("./models/productModel");
+const registerRoute = require("./Route/Register");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const createAdminAccount = require("./Scripts/Admin");
+const loginRoute = require("./Route/Login");
+const userRoute = require("./Route/User");
+//const productRoute = require("./Routes/productRoute");
 
 const app = express();
 
 // Middleware to parse JSON
 app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
 // Import routes
-const productRoute = require("./Routes/productRoute");
-const authRoute = require("./Routes/authRoute");
 
-// Use routes
-app.use("/product", productRoute);
-app.use("/auth", authRoute);
+app.use("/user", registerRoute); // registration-related routes
+app.use("/auth", loginRoute); // login-related routes
+app.use("/api", userRoute); // user-related routes
+
+
+//app.use("/product", productRoute);
+
+// Initialize admin account
+createAdminAccount();
 
 mongoose
   .connect(process.env.DATABASE_CONNECTION_URL)
