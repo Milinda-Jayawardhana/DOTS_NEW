@@ -7,7 +7,13 @@ const cors = require("cors");
 const createAdminAccount = require("./Scripts/Admin");
 const loginRoute = require("./Route/Login");
 const userRoute = require("./Route/User");
+const tcolorsRoute = require("./Route/Tcolors");
+const tsizesRoute = require("./Route/Tsizes");
+const tmaterialsRoute = require("./Route/Tmaterials");
+const tcountRoute = require("./Route/Tcount");
 //const productRoute = require("./Routes/productRoute");
+
+
 
 const app = express();
 
@@ -21,7 +27,10 @@ app.use(bodyParser.json());
 app.use("/user", registerRoute); // registration-related routes
 app.use("/auth", loginRoute); // login-related routes
 app.use("/api", userRoute); // user-related routes
-
+app.use("/api", tcolorsRoute); // color-related routes
+app.use("/api", tsizesRoute); // color-related routes
+app.use("/api", tmaterialsRoute); // color-related routes
+app.use("/api", tcountRoute); // color-related routes
 
 //app.use("/product", productRoute);
 
