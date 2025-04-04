@@ -1,10 +1,9 @@
 import React from 'react'
 
-export default function Blogs() {
+export default function Admin() {
   return (
     <div>
-      blogs
-    
+      admin page
     </div>
   )
 }
