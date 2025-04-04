@@ -3,11 +3,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const registerRoute = require("./Route/Register");
 const bodyParser = require("body-parser");
-const Product = require("./Model/productModel");
 const cors = require("cors");
 const createAdminAccount = require("./Scripts/Admin");
 const loginRoute = require("./Route/Login");
 const userRoute = require("./Route/User");
+//const productRoute = require("./Routes/productRoute");
 
 const app = express();
 
@@ -16,14 +16,16 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 
-//
+// Import routes
 
-// Use routes
 app.use("/user", registerRoute); // registration-related routes
 app.use("/auth", loginRoute); // login-related routes
 app.use("/api", userRoute); // user-related routes
 
 
+//app.use("/product", productRoute);
+
+// Initialize admin account
 createAdminAccount();
 
 mongoose
@@ -35,6 +37,5 @@ mongoose
     console.log("Connected to the MongoDB");
   })
   .catch((error) => {
-    console.error("Error connecting to MongoDB:", error); // Log the error
+    console.log("Error:",error);
   });
-
