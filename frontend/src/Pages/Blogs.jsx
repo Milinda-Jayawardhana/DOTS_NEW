@@ -1,9 +1,10 @@
 import React from 'react'
+import Footer from '../Components/Footer'
 
 export default function Blogs() {
   return (
     <div>
-      blogs
+    <Footer></Footer>
     
     </div>
   )

@@ -4,7 +4,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <div className="py-10 text-white bg-black">
+    <div className="py-10 text-white bg-blue-950/20">
       <div className="flex justify-center mb-6">
         <div className="flex gap-3">
           {[1, 2, 3, 4, 5].map((dot) => (

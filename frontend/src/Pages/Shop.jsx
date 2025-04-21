@@ -4,6 +4,7 @@ import Tcount from "../Components/Tcont";
 import Tmaterial from "../Components/Tmaterial";
 import Tsizes from "../Components/Tsizes";
 import Tcolours from "../Components/Tcolours";
+import Footer from "../Components/Footer";
 
 export default function Shop() {
   const [popup, setPopup] = useState(null);
@@ -145,6 +146,7 @@ export default function Shop() {
           </div>
         )}
       </div>
+      <Footer></Footer>
     </div>
   );
 }
