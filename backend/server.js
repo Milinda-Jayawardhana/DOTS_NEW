@@ -11,7 +11,7 @@ const tcolorsRoute = require("./Route/Tcolors");
 const tsizesRoute = require("./Route/Tsizes");
 const tmaterialsRoute = require("./Route/Tmaterials");
 const tcountRoute = require("./Route/Tcount");
-//const productRoute = require("./Routes/productRoute");
+const preorderRoute = require('./Route/preorderRoute');
 
 
 
@@ -31,8 +31,7 @@ app.use("/api", tcolorsRoute); // color-related routes
 app.use("/api", tsizesRoute); // color-related routes
 app.use("/api", tmaterialsRoute); // color-related routes
 app.use("/api", tcountRoute); // color-related routes
-
-//app.use("/product", productRoute);
+app.use('/api/preorders', preorderRoute);
 
 // Initialize admin account
 createAdminAccount();
