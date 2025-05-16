@@ -12,6 +12,7 @@ const tsizesRoute = require("./Route/Tsizes");
 const tmaterialsRoute = require("./Route/Tmaterials");
 const tcountRoute = require("./Route/Tcount");
 const contactRoute = require("./Route/contactUs");
+const ttypeRoute = require("./Route/Ttype");
 //const productRoute = require("./Routes/productRoute");
 
 
@@ -33,6 +34,7 @@ app.use("/api", tsizesRoute); // color-related routes
 app.use("/api", tmaterialsRoute); // color-related routes
 app.use("/api", tcountRoute); // color-related routes
 app.use("/api", contactRoute); // color-related routes
+app.use("/api", ttypeRoute); // color-related routes
 
 //app.use("/product", productRoute);
 
