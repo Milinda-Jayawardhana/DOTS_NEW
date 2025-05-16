@@ -1,27 +1,37 @@
 const mongoose = require('mongoose');
 
 const preorderSchema = new mongoose.Schema({
-    name: {
+    customerName: {
         type: String,
-        required: [true, 'Name is required']
+        required: [true, 'Customer name is required']
     },
-    registrationNumber: {
+    address: {
         type: String,
-        required: [true, 'Registration number is required'],
-        unique: true,
-        match: [/^[A-Z]{2}\/\d{4}\/\d{4}$/, 'Please enter a valid registration number (XX/XXXX/XXXX)']
+        required: [true, 'Delivery address is required']
     },
-    batch: {
+    telephone: {
         type: String,
-        required: [true, 'Batch is required']
+        required: [true, 'Telephone number is required'],
+        match: [/^[0-9]{10}$/, 'Please enter a valid phone number']
     },
-    tshirtOrders: {
-        xs: { type: Number, default: 0, min: 0 },
-        s: { type: Number, default: 0, min: 0 },
-        m: { type: Number, default: 0, min: 0 },
-        l: { type: Number, default: 0, min: 0 },
-        xl: { type: Number, default: 0, min: 0 },
-        xxl: { type: Number, default: 0, min: 0 }
+    tshirtDetails: {
+        material: {
+            type: String,
+            required: [true, 'Material type is required'],
+            enum: ['Cotton', 'Polyester', 'Cotton-Polyester Blend']
+        },
+        printingType: {
+            type: String,
+            required: [true, 'Printing type is required'],
+            enum: ['Printing', 'Embroidering', 'Sublimation']
+        },
+        quantities: {
+            s: { type: Number, default: 0, min: 0 },
+            m: { type: Number, default: 0, min: 0 },
+            l: { type: Number, default: 0, min: 0 },
+            xl: { type: Number, default: 0, min: 0 },
+            xxl: { type: Number, default: 0, min: 0 }
+        }
     },
     paymentDetails: {
         amount: {
@@ -39,7 +49,7 @@ const preorderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
+        enum: ['Pending', 'Confirmed', 'Processing', 'Ready', 'Delivered', 'Cancelled'],
         default: 'Pending'
     }
 }, {
