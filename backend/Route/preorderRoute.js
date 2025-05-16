@@ -36,14 +36,19 @@ const upload = multer({
 router.post('/', upload.single('bankSlip'), async (req, res) => {
     try {
         const preorderData = {
-            ...req.body,
-            tshirtOrders: {
-                xs: parseInt(req.body.xs || 0),
-                s: parseInt(req.body.s || 0),
-                m: parseInt(req.body.m || 0),
-                l: parseInt(req.body.l || 0),
-                xl: parseInt(req.body.xl || 0),
-                xxl: parseInt(req.body.xxl || 0)
+            customerName: req.body.customerName,
+            address: req.body.address,
+            telephone: req.body.telephone,
+            tshirtDetails: {
+                material: req.body.material,
+                printingType: req.body.printingType,
+                quantities: {
+                    s: parseInt(req.body.s || 0),
+                    m: parseInt(req.body.m || 0),
+                    l: parseInt(req.body.l || 0),
+                    xl: parseInt(req.body.xl || 0),
+                    xxl: parseInt(req.body.xxl || 0)
+                }
             },
             paymentDetails: {
                 amount: parseFloat(req.body.amount),
@@ -59,7 +64,7 @@ router.post('/', upload.single('bankSlip'), async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Preorder created successfully',
+            message: 'Order placed successfully',
             data: preorder
         });
     } catch (error) {
@@ -76,6 +81,7 @@ router.get('/', async (req, res) => {
         const preorders = await Preorder.find().sort({ createdAt: -1 });
         res.status(200).json({
             success: true,
+            count: preorders.length,
             data: preorders
         });
     } catch (error) {
@@ -86,17 +92,15 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get single preorder by registration number
-router.get('/:regNo', async (req, res) => {
+// Get single preorder by ID
+router.get('/:id', async (req, res) => {
     try {
-        const preorder = await Preorder.findOne({ 
-            registrationNumber: req.params.regNo 
-        });
+        const preorder = await Preorder.findById(req.params.id);
         
         if (!preorder) {
             return res.status(404).json({
                 success: false,
-                message: 'Preorder not found'
+                message: 'Order not found'
             });
         }
 

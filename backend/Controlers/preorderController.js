@@ -4,23 +4,25 @@ const Preorder = require('../Model/preorderModel');
 const createPreorder = async (req, res) => {
     try {
         const preorderData = {
-            name: req.body.name,
-            registrationNumber: req.body.registrationNumber,
-            batch: req.body.batch,
-            tshirtOrders: {
-                xs: parseInt(req.body.xs || 0),
-                s: parseInt(req.body.s || 0),
-                m: parseInt(req.body.m || 0),
-                l: parseInt(req.body.l || 0),
-                xl: parseInt(req.body.xl || 0),
-                xxl: parseInt(req.body.xxl || 0)
+            customerName: req.body.customerName,
+            address: req.body.address,
+            telephone: req.body.telephone,
+            tshirtDetails: {
+                material: req.body.material,
+                printingType: req.body.printingType,
+                quantities: {
+                    s: parseInt(req.body.s || 0),
+                    m: parseInt(req.body.m || 0),
+                    l: parseInt(req.body.l || 0),
+                    xl: parseInt(req.body.xl || 0),
+                    xxl: parseInt(req.body.xxl || 0)
+                }
             },
             paymentDetails: {
                 amount: parseFloat(req.body.amount),
                 bankSlip: req.file ? {
                     filename: req.file.filename,
-                    path: req.file.path,
-                    uploadDate: new Date()
+                    path: req.file.path
                 } : null
             }
         };
@@ -30,7 +32,7 @@ const createPreorder = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Preorder created successfully',
+            message: 'Order placed successfully',
             data: preorder
         });
     } catch (error) {
@@ -51,59 +53,28 @@ const getAllPreorders = async (req, res) => {
             data: preorders
         });
     } catch (error) {
-        res.status(500).json({
+        res.status(400).json({
             success: false,
             message: error.message
         });
     }
 };
 
-// Get preorder by registration number
-const getPreorderByRegNo = async (req, res) => {
+// Get single preorder
+const getPreorderById = async (req, res) => {
     try {
-        const preorder = await Preorder.findOne({ 
-            registrationNumber: req.params.regNo 
-        });
+        const preorder = await Preorder.findById(req.params.id);
         
         if (!preorder) {
             return res.status(404).json({
                 success: false,
-                message: 'Preorder not found'
+                message: 'Order not found'
             });
         }
 
         res.status(200).json({
             success: true,
             data: preorder
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Update order status
-const updateOrderStatus = async (req, res) => {
-    try {
-        const preorder = await Preorder.findOneAndUpdate(
-            { registrationNumber: req.params.regNo },
-            { orderStatus: req.body.orderStatus },
-            { new: true, runValidators: true }
-        );
-
-        if (!preorder) {
-            return res.status(404).json({
-                success: false,
-                message: 'Preorder not found'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: preorder,
-            message: 'Order status updated successfully'
         });
     } catch (error) {
         res.status(400).json({
@@ -113,51 +84,8 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-// Get order statistics
-const getOrderStats = async (req, res) => {
-    try {
-        const stats = await Preorder.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalOrders: { $sum: 1 },
-                    totalAmount: { $sum: "$paymentDetails.amount" },
-                    totalShirts: {
-                        $sum: {
-                            $add: [
-                                "$tshirtOrders.xs",
-                                "$tshirtOrders.s",
-                                "$tshirtOrders.m",
-                                "$tshirtOrders.l",
-                                "$tshirtOrders.xl",
-                                "$tshirtOrders.xxl"
-                            ]
-                        }
-                    }
-                }
-            }
-        ]);
-
-        res.status(200).json({
-            success: true,
-            data: stats[0] || {
-                totalOrders: 0,
-                totalAmount: 0,
-                totalShirts: 0
-            }
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
 module.exports = {
     createPreorder,
     getAllPreorders,
-    getPreorderByRegNo,
-    updateOrderStatus,
-    getOrderStats
+    getPreorderById
 };
