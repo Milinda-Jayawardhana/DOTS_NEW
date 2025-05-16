@@ -4,8 +4,17 @@ import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import Footer from "../Components/Footer";
 
 export default function Contact() {
-  const [selected, setSelected] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    contactNumber: "",
+    serviceType: "",
+    comment: "",
+  });
+
   const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState(""); // Success or error message
 
   const options = [
     { value: "est", label: "As a customer" },
@@ -16,14 +25,54 @@ export default function Contact() {
   ];
 
   const handleSelect = (value) => {
-    setSelected(value);
+    setFormData({ ...formData, serviceType: value });
     setIsOpen(false);
   };
 
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("");
+
+    try {
+      const res = await fetch("http://localhost:3000/api/contacts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus("Contact submitted successfully!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          contactNumber: "",
+          serviceType: "",
+          comment: "",
+        });
+      } else {
+        setStatus(data.message || "Something went wrong.");
+      }
+    } catch (err) {
+      setStatus("Failed to submit contact.");
+    }
+  };
+
   const info = [
-    { icon: <FaMapMarkerAlt/>, title: "Location", value: "Boralegamuwa, Colombo" },
-    { icon: <FaPhoneAlt/>, title: "Phone", value: "+94 71 550 8827" },
-    { icon: <FaEnvelope/>, title: "Email", value: "dotsshirt@gmail.com" },
+    { icon: <FaMapMarkerAlt />, title: "Location", value: "Boralegamuwa, Colombo" },
+    { icon: <FaPhoneAlt />, title: "Phone", value: "+94 71 550 8827" },
+    { icon: <FaEnvelope />, title: "Email", value: "dotsshirt@gmail.com" },
   ];
 
   return (
@@ -32,37 +81,50 @@ export default function Contact() {
         <div className="flex flex-col lg:flex-row gap-[20px] px-20 lg:px-40">
           {/* Contact Form */}
           <div className="lg:w-[54%] order-2 lg:order-none justify-center">
-            <form className="flex flex-col gap-6 p-10 bg-gray-800 border border-b-0 border-white/50 rounded-xl">
+            <form
+              className="flex flex-col gap-6 p-10 bg-gray-800 border border-b-0 border-white/50 rounded-xl"
+              onSubmit={handleSubmit}
+            >
               <h3 className="text-4xl font-bold text-white">Contact Us</h3>
-              <p className="text-white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos,
-                quibusdam! Aperiam, corporis ullam quam sit eaque natus aut
-                magni consequatur consequuntur dignissimos nemo.
-              </p>
+              <p className="text-white">Send us a message or inquiry below.</p>
 
               {/* Input Fields */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <input
                   type="text"
+                  name="firstName"
                   placeholder="First name"
-                  spellCheck="false"
-                  className="p-2 border border-transparent rounded-md bg-gray-900/70 focus:outline-none focus:ring-0 focus:border-transparent hover:border-white"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="p-2 border border-transparent rounded-md bg-gray-900/70 hover:border-white"
+                  
                 />
                 <input
                   type="text"
+                  name="lastName"
                   placeholder="Last name"
-                  spellCheck="false"
-                  className="p-2 border border-transparent rounded-md bg-gray-900/70 focus:outline-none focus:ring-0 focus:border-transparent hover:border-white"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="p-2 border border-transparent rounded-md bg-gray-900/70 hover:border-white"
+   
                 />
                 <input
                   type="email"
+                  name="email"
                   placeholder="Email"
-                  className="p-2 border border-transparent rounded-md bg-gray-900/70 focus:outline-none focus:ring-0 focus:border-transparent hover:border-white"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="p-2 border border-transparent rounded-md bg-gray-900/70 hover:border-white"
+
                 />
                 <input
                   type="tel"
+                  name="contactNumber"
                   placeholder="Mobile number"
-                  className="p-2 border border-transparent rounded-md bg-gray-900/70 focus:outline-none focus:ring-0 focus:border-transparent hover:border-white"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  className="p-2 border border-transparent rounded-md bg-gray-900/70 hover:border-white"
+
                 />
               </div>
 
@@ -74,22 +136,17 @@ export default function Contact() {
                   className="flex items-center justify-between w-full px-2 py-2 text-left border-transparent rounded-md text-white/60 bg-gray-900/70"
                 >
                   <span>
-                    {selected
-                      ? options.find((opt) => opt.value === selected)?.label
+                    {formData.serviceType
+                      ? options.find((opt) => opt.value === formData.serviceType)?.label
                       : "Select a Service"}
                   </span>
-
-                  {/* Dropdown Arrow Icon */}
                   <FiChevronDown
-                    className={`w-5 h-5 transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
 
                 {isOpen && (
-                  <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-b-0 rounded-md shadow-lg border-white/50 ">
-                    
+                  <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-b-0 rounded-md shadow-lg border-white/50">
                     {options.map((option) => (
                       <div
                         key={option.value}
@@ -105,14 +162,23 @@ export default function Contact() {
 
               {/* Message Box */}
               <textarea
-                className="h-32 p-2 border border-transparent rounded-md bg-gray-900/70 focus:outline-none focus:ring-0 focus:border-transparent hover:border-white"
+                name="comment"
+                value={formData.comment}
+                onChange={handleChange}
+                className="h-32 p-2 border border-transparent rounded-md bg-gray-900/70 hover:border-white"
                 placeholder="Send your comments for me..."
               ></textarea>
 
               {/* Submit Button */}
-              <button className="p-2 font-bold text-white bg-black border border-transparent hover:border-white max-w-40 rounded-xl">
+              <button
+                type="submit"
+                className="p-2 font-bold text-white bg-black border border-transparent hover:border-white max-w-40 rounded-xl"
+              >
                 Submit
               </button>
+
+              {/* Status Message */}
+              {status && <p className="text-green-400">{status}</p>}
             </form>
           </div>
 
@@ -134,9 +200,7 @@ export default function Contact() {
           </div>
         </div>
       </div>
-      <div>
-        <Footer></Footer>
-      </div>
+      <Footer />
     </div>
   );
 }
