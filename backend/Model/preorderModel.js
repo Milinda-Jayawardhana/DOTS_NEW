@@ -16,9 +16,7 @@ const preorderSchema = new mongoose.Schema({
     },
     tshirtDetails: {
         material: {
-            type: String,
-            required: [true, 'Material type is required'],
-            enum: ['Cotton', 'Polyester', 'Cotton-Polyester Blend']
+            type: String
         },
         printingType: {
             type: String,
@@ -26,27 +24,16 @@ const preorderSchema = new mongoose.Schema({
             enum: ['Printing', 'Embroidering', 'Sublimation']
         },
         quantities: {
+            xs: { type: Number, default: 0, min: 0 },
             s: { type: Number, default: 0, min: 0 },
             m: { type: Number, default: 0, min: 0 },
             l: { type: Number, default: 0, min: 0 },
             xl: { type: Number, default: 0, min: 0 },
-            xxl: { type: Number, default: 0, min: 0 }
+            xxl: { type: Number, default: 0, min: 0 },
+            xxxl: { type: Number, default: 0, min: 0 }
         }
     },
-    paymentDetails: {
-        amount: {
-            type: Number,
-            required: [true, 'Payment amount is required']
-        },
-        bankSlip: {
-            filename: String,
-            path: String,
-            uploadDate: {
-                type: Date,
-                default: Date.now
-            }
-        }
-    },
+    
     orderStatus: {
         type: String,
         enum: ['Pending', 'Confirmed', 'Processing', 'Ready', 'Delivered', 'Cancelled'],
