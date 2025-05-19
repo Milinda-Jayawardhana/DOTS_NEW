@@ -43,7 +43,7 @@ export default function Counts({ onClose, onSelectCount }) {
   }, []);
 
   const handleCountChange = (count) => {
-    setSelectedCount(count); // Allow only one selection
+    setSelectedCount(count);
   };
 
   const startEditing = (count) => {
@@ -52,12 +52,17 @@ export default function Counts({ onClose, onSelectCount }) {
 
   const handleUpdate = async () => {
     if (!editingCount) return;
+
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.put(
         `http://localhost:3000/api/counts/${editingCount._id}`,
         {
           name: editingCount.name,
           price: editingCount.price,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -77,7 +82,13 @@ export default function Counts({ onClose, onSelectCount }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/counts/${id}`);
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(
+        `http://localhost:3000/api/counts/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setCounts((prev) => prev.filter((count) => count._id !== id));
         console.log("Count deleted successfully");
@@ -182,7 +193,7 @@ export default function Counts({ onClose, onSelectCount }) {
           <button
             className="px-3 py-2 text-white bg-gray-700 rounded"
             onClick={() => {
-              onSelectCount(selectedCount); // Send the selected count to Shop
+              onSelectCount(selectedCount);
               onClose();
             }}
             disabled={!selectedCount}
