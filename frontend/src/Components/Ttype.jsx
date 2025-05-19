@@ -108,7 +108,7 @@ export default function Ttype({ onClose, onSelectType }) {
                   className="w-4 h-4 cursor-pointer"
                 />
                 <span className="text-black">
-                  {type.name} - Rs. {type.price}
+                  {type.name}
                 </span>
 
                 {role === "admin" && (
