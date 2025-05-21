@@ -25,7 +25,17 @@ const createPreorder = async (req, res) => {
         quantity: req.body.quantity,
         material: req.body.material,
         printingType: req.body.printingType,
-        quantities: quantitiesArray
+        quantities: quantitiesArray,
+        collars: req.body.collars || [],
+        piping: req.body.piping || [],
+        finishing: req.body.finishing || [],
+        label: req.body.label || [],
+        buttons: {
+          count: req.body.buttons?.count || '',
+          colour: req.body.buttons?.colour || 0
+        },
+        outlines: req.body.outlines || [],
+        sleeve: req.body.sleeve || []
       }
     };
 
@@ -44,6 +54,8 @@ const createPreorder = async (req, res) => {
     });
   }
 };
+
+
 
 
 // Get all preorders (for admin)

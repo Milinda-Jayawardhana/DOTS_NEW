@@ -103,7 +103,7 @@ export default function Shop() {
 
           {/* Cost Display */}
           <div className="flex flex-col items-start justify-between gap-3 text-xl sm:flex-row">
-            <h2>Average Cost: ${averageCost.toFixed(2)}</h2>
+            <h2>Average Cost: Rs{averageCost.toFixed(2)}</h2>
             <button
               className="text-red-500"
               onClick={() => {

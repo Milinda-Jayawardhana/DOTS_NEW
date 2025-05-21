@@ -19,8 +19,48 @@ const tshirtDetailsSchema = new mongoose.Schema({
       size: { type: String, required: true },
       count: { type: Number, default: 0, min: 0 }
     }
-  ]
-}, { _id: false }); // _id false since this is a subdocument
+  ],
+  collars: {
+    type: [String],
+    enum: ['Ready Made', 'Half in', 'Half out', 'Full Collar'],
+    default: []
+  },
+  piping: {
+    type: [String],
+    enum: ['Arm Whole', 'Cuff', 'Placket'],
+    default: []
+  },
+  finishing: {
+    type: [String],
+    enum: ['Side Open', 'Single Plackets', 'Front Packets', 'Under Packets'],
+    default: []
+  },
+  label: {
+    type: [String],
+    enum: ['Label-DOTS', 'Label-Size'],
+    default: []
+  },
+  buttons: {
+    count: { type: String },
+    colour: { type: String }
+  },
+
+  outlines: {
+    type: [String],
+    enum: [
+      'Shoulder-1/8', 'Shoulder-1/16',
+      'Armwhole-1/8', 'Armwhole-1/16',
+      'Collar-1/8', 'Collar-1/16',
+      'Contras-1/8', 'Contras-1/16'
+    ],
+    default: []
+  },
+  sleeve: {
+    type: [String],
+    enum: ['Normal', 'Cuff', 'DB Hem'],
+    default: []
+  }
+}, { _id: false });
 
 const preorderSchema = new mongoose.Schema({
   userEmail: {
@@ -57,7 +97,6 @@ const preorderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate a unique orderId before saving
 preorderSchema.pre('save', function (next) {
   if (!this.orderId && this.userEmail) {
     const timestamp = Date.now();

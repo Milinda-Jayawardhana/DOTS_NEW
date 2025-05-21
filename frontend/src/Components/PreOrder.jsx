@@ -11,26 +11,59 @@ export default function PreOrder({ onClose }) {
     printingType: "",
     quantity: "",
     quantities: {},
+    collars: [],
+    piping: [],
+    finishing: [],
+    label: [],
+    buttons: { count: "", colour: "" },
+    outlines: [],
+    sleeve: [],
   });
 
   const [materials, setMaterials] = useState([]);
   const [types, setTypes] = useState([]);
   const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
   const [message, setMessage] = useState("");
+
+  const multiOptions = {
+    collars: ["Ready Made", "Half in", "Half out", "Full Collar"],
+    piping: ["Arm Whole", "Cuff", "Placket"],
+    finishing: [
+      "Side Open",
+      "Single Plackets",
+      "Front Packets",
+      "Under Packets",
+    ],
+    label: ["Label-DOTS", "Label-Size"],
+    outlines: [
+      "Shoulder-1/8",
+      "Shoulder-1/16",
+      "Armwhole-1/8",
+      "Armwhole-1/16",
+      "Collar-1/8",
+      "Collar-1/16",
+      "Contras-1/8",
+      "Contras-1/16",
+    ],
+    sleeve: ["Normal", "Cuff", "DB Hem"],
+  };
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [matRes, typeRes, sizeRes] = await Promise.all([
+        const [matRes, typeRes, sizeRes, colorRes] = await Promise.all([
           axios.get("http://localhost:3000/api/material"),
           axios.get("http://localhost:3000/api/types"),
           axios.get("http://localhost:3000/api/sizes"),
+          axios.get("http://localhost:3000/api/colors"),
         ]);
 
         setMaterials(matRes.data.materials || []);
         setTypes(typeRes.data.types || []);
         const sizeList = sizeRes.data.sizes || [];
         setSizes(sizeList);
+        setColors(colorRes.data.colors || []);
 
         const initialQuantities = {};
         sizeList.forEach((size) => {
@@ -50,7 +83,7 @@ export default function PreOrder({ onClose }) {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     if (name.startsWith("size-")) {
       const sizeKey = name.replace("size-", "");
@@ -59,6 +92,21 @@ export default function PreOrder({ onClose }) {
         quantities: {
           ...prev.quantities,
           [sizeKey]: value === "" ? "" : Math.max(0, parseInt(value, 10)),
+        },
+      }));
+    } else if (multiOptions[name]) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: checked
+          ? [...prev[name], value]
+          : prev[name].filter((item) => item !== value),
+      }));
+    } else if (name === "buttonCount" || name === "buttonColour") {
+      setFormData((prev) => ({
+        ...prev,
+        buttons: {
+          ...prev.buttons,
+          [name === "buttonCount" ? "count" : "colour"]: value,
         },
       }));
     } else {
@@ -78,14 +126,10 @@ export default function PreOrder({ onClose }) {
       const decoded = jwtDecode(token);
 
       const formattedQuantities = Object.entries(formData.quantities).map(
-        ([size, count]) => ({
-          size,
-          count,
-        })
+        ([size, count]) => ({ size, count })
       );
 
       const payload = {
-        userEmail: decoded.email,
         customerName: formData.customerName,
         address: formData.address,
         telephone: formData.telephone,
@@ -93,6 +137,13 @@ export default function PreOrder({ onClose }) {
         material: formData.material,
         printingType: formData.printingType,
         quantities: formattedQuantities,
+        collars: formData.collars,
+        piping: formData.piping,
+        finishing: formData.finishing,
+        label: formData.label,
+        buttons: formData.buttons,
+        outlines: formData.outlines,
+        sleeve: formData.sleeve,
       };
 
       const response = await axios.post(
@@ -106,142 +157,193 @@ export default function PreOrder({ onClose }) {
       );
 
       setMessage(response.data.message || "Order placed successfully!");
-
-      const resetQuantities = {};
-      sizes.forEach((size) => {
-        resetQuantities[size.name] = 0;
-      });
-
-      setFormData({
-        customerName: "",
-        address: "",
-        telephone: "",
-        material: "",
-        printingType: "",
-        quantity: "",
-        quantities: resetQuantities,
-      });
     } catch (error) {
       console.error("Order error:", error);
       setMessage(error.response?.data?.message || "Error placing order.");
     }
   };
 
+  const renderCheckboxGroup = (label, name, options) => (
+    <div>
+      <h4 className="font-medium mt-4">{label}</h4>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <label key={option} className="flex items-center gap-1">
+            <input
+              type="checkbox"
+              name={name}
+              value={option}
+              checked={formData[name].includes(option)}
+              onChange={handleChange}
+            />
+            {option}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex justify-center items-center px-4">
-      <div className="bg-gray-900 rounded-lg p-6 max-w-lg w-full relative overflow-y-auto max-h-[90vh] text-white">
+      <div className="bg-gray-800 rounded-lg p-6 max-w-4xl w-full relative overflow-y-auto max-h-[90vh] text-white">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-400 text-3xl hover:text-red-600"
+          className="absolute top-2 right-3 text-gray-400 text-3xl hover:text-black"
           aria-label="Close"
         >
           &times;
         </button>
-        <h2 className="text-2xl font-semibold mb-4">
+        <h2 className="text-2xl text-center font-semibold mb-4">
           Place Your T-Shirt Order
         </h2>
         {message && <p className="mb-4 text-green-400">{message}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="customerName"
-            placeholder="Enter Customer Name"
-            value={formData.customerName}
-            onChange={handleChange}
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          />
 
-          <input
-            type="text"
-            name="address"
-            placeholder="Enter Delivery Address"
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          />
+        <form onSubmit={handleSubmit} >
+          <div className="flex gap-8">
+            {/* LEFT COLUMN - INPUT FIELDS */}
+            <div className="flex-1 space-y-4">
+              <input
+                type="text"
+                name="customerName"
+                placeholder="Customer Name"
+                value={formData.customerName}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                required
+              />
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                required
+              />
+              <input
+                type="text"
+                name="telephone"
+                placeholder="Telephone"
+                value={formData.telephone}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                pattern="[0-9]{10}"
+                required
+              />
+              <input
+                type="text"
+                name="quantity"
+                placeholder="Quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                required
+              />
 
-          <input
-            type="text"
-            name="telephone"
-            placeholder="Enter Telephone Number (10 digits)"
-            value={formData.telephone}
-            onChange={handleChange}
-            pattern="[0-9]{10}"
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          />
+              <select
+                name="material"
+                value={formData.material}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                required
+              >
+                <option value="">Select Material</option>
+                {materials.map((mat) => (
+                  <option key={mat._id} value={mat.name}>
+                    {mat.name}
+                  </option>
+                ))}
+              </select>
 
-          <input
-            type="text"
-            name="quantity"
-            placeholder="Total Quantity"
-            value={formData.quantity}
-            onChange={handleChange}
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          />
+              <select
+                name="printingType"
+                value={formData.printingType}
+                onChange={handleChange}
+                className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                required
+              >
+                <option value="">Select Printing Type</option>
+                {types.map((type) => (
+                  <option key={type._id} value={type.name}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
 
-          <select
-            name="material"
-            value={formData.material}
-            onChange={handleChange}
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          >
-            <option value="" disabled>
-              Select Material
-            </option>
-            {materials.map((mat) => (
-              <option key={mat._id} value={mat.name}>
-                {mat.name}
-              </option>
-            ))}
-          </select>
+              <div>
+                <h4 className="font-medium">Quantities</h4>
+                {sizes.map((size) => (
+                  <div
+                    key={size._id}
+                    className="flex items-center space-x-3 mb-2"
+                  >
+                    <label className="w-20">{size.name}</label>
+                    <input
+                      type="number"
+                      name={`size-${size.name}`}
+                      value={
+                        formData.quantities[size.name] === 0
+                          ? ""
+                          : formData.quantities[size.name]
+                      }
+                      onChange={handleChange}
+                      min="0"
+                      className="bg-white text-black border border-gray-600 rounded px-3 py-1 w-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
 
-          <select
-            name="printingType"
-            value={formData.printingType}
-            onChange={handleChange}
-            className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2 placeholder-gray-400"
-            required
-          >
-            <option value="" disabled>
-              Select Printing Type
-            </option>
-            {types.map((type) => (
-              <option key={type._id} value={type.name}>
-                {type.name}
-              </option>
-            ))}
-          </select>
+            {/* RIGHT COLUMN - CHECKBOX GROUPS */}
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2 min-h-full">
+              {renderCheckboxGroup("Collars", "collars", multiOptions.collars)}
+              {renderCheckboxGroup("Piping", "piping", multiOptions.piping)}
+              {renderCheckboxGroup(
+                "Finishing",
+                "finishing",
+                multiOptions.finishing
+              )}
+              {renderCheckboxGroup("Label", "label", multiOptions.label)}
+              {renderCheckboxGroup(
+                "Outlines",
+                "outlines",
+                multiOptions.outlines
+              )}
+              {renderCheckboxGroup("Sleeve", "sleeve", multiOptions.sleeve)}
 
-          <div>
-            <h4 className="font-medium mb-2">Quantities</h4>
-            {sizes.map((size) => (
-              <div key={size._id} className="flex items-center space-x-3 mb-2">
-                <label className="w-20">{size.name}</label>
+              <div>
                 <input
-                  type="number"
-                  name={`size-${size.name}`}
-                  value={
-                    formData.quantities[size.name] === 0
-                      ? ""
-                      : formData.quantities[size.name]
-                  }
+                  type="text"
+                  name="buttonCount"
+                  value={formData.buttons.count}
                   onChange={handleChange}
-                  min="0"
-                  className="bg-black text-white border border-gray-600 rounded px-3 py-1 w-full placeholder-gray-400"
-                  placeholder={`Quantity of ${size.name}`}
+                  className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                  placeholder="Enter number of buttons"
                 />
               </div>
-            ))}
+
+              <div>
+                <select
+                  name="buttonColour"
+                  value={formData.buttons.colour}
+                  onChange={handleChange}
+                  className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                >
+                  <option value="">Select Button Colour</option>
+                  {colors.map((color) => (
+                    <option key={color._id} value={color.name}>
+                      {color.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           <button
             type="submit"
-            className="bg-blue-700 hover:bg-blue-800 transition-colors text-white w-full py-3 rounded font-semibold"
+            className="bg-black hover:bg-black/40 transition-colors text-white w-full py-3 rounded font-semibold mt-4"
           >
             Submit Order
           </button>
