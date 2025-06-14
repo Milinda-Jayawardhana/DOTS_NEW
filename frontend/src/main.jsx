@@ -10,6 +10,9 @@ import Home from './Pages/Home.jsx';
 import Register from './Pages/Register.jsx';
 import Login from './Pages/Login.jsx';
 import Admin from './Pages/Admin.jsx';
+import AdminAddItems from './Pages/AdminAddItems.jsx';
+import AdminOrders from './Pages/AdminOrders.jsx'; // Import AdminOrders if needed
+import AdminComments from './Pages/AdminComments.jsx';
 
 
 
@@ -27,7 +30,9 @@ const router = createBrowserRouter([
       { path: '/register', element: <Register /> },
       { path: '/login', element: <Login /> },
       { path: '/admin', element: <Admin /> },
-   
+      { path: '/admin/add-items', element: <AdminAddItems /> },
+      { path: '/admin/orders', element: <AdminOrders /> },
+      { path: '/admin/comments', element: <AdminComments /> },
 
     ],
   }

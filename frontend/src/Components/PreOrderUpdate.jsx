@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
-export default function PreOrder({ onClose }) {
+export default function PreOrderUpdate({ orderData, onClose }) {
   const initialFormData = {
     customerName: "",
     address: "",
@@ -65,16 +65,6 @@ export default function PreOrder({ onClose }) {
         const sizeList = sizeRes.data.sizes || [];
         setSizes(sizeList);
         setColors(colorRes.data.colors || []);
-
-        const initialQuantities = {};
-        sizeList.forEach((size) => {
-          initialQuantities[size.name] = 0;
-        });
-
-        setFormData((prev) => ({
-          ...initialFormData,
-          quantities: initialQuantities,
-        }));
       } catch (error) {
         console.error("Error fetching materials/types/sizes:", error);
       }
@@ -82,6 +72,35 @@ export default function PreOrder({ onClose }) {
 
     fetchOptions();
   }, []);
+
+  useEffect(() => {
+    if (orderData) {
+      // Convert quantities array to object for the form
+      const quantitiesObj = {};
+      if (orderData.tshirtDetails?.quantities) {
+        orderData.tshirtDetails.quantities.forEach((q) => {
+          quantitiesObj[q.size] = q.count;
+        });
+      }
+
+      setFormData({
+        customerName: orderData.customerName || "",
+        address: orderData.address || "",
+        telephone: orderData.telephone || "",
+        material: orderData.tshirtDetails?.material || "",
+        printingType: orderData.tshirtDetails?.printingType || "",
+        quantity: orderData.tshirtDetails?.quantity || "",
+        quantities: quantitiesObj,
+        collars: orderData.tshirtDetails?.collars || [],
+        piping: orderData.tshirtDetails?.piping || [],
+        finishing: orderData.tshirtDetails?.finishing || [],
+        label: orderData.tshirtDetails?.label || [],
+        buttons: orderData.tshirtDetails?.buttons || { count: "", colour: "" },
+        outlines: orderData.tshirtDetails?.outlines || [],
+        sleeve: orderData.tshirtDetails?.sleeve || [],
+      });
+    }
+  }, [orderData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -122,14 +141,14 @@ export default function PreOrder({ onClose }) {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      if (!token) return setMessage("Please log in to place an order");
+      if (!token) return setMessage("Please log in to update an order");
 
-      const decoded = jwtDecode(token);
-
+      // Prepare quantities as array
       const formattedQuantities = Object.entries(formData.quantities).map(
         ([size, count]) => ({ size, count })
       );
 
+      // Prepare payload
       const payload = {
         customerName: formData.customerName,
         address: formData.address,
@@ -147,8 +166,9 @@ export default function PreOrder({ onClose }) {
         sleeve: formData.sleeve,
       };
 
-      const response = await axios.post(
-        "http://localhost:3000/api/order",
+      // Use PUT for update, and use the order's _id
+      const response = await axios.put(
+        `http://localhost:3000/api/order/${orderData._id}`,
         payload,
         {
           headers: {
@@ -157,21 +177,14 @@ export default function PreOrder({ onClose }) {
         }
       );
 
-      setMessage(response.data.message || "Order placed successfully!");
-
-      // Reset formData after successful submit:
-      const resetQuantities = {};
-      sizes.forEach((size) => {
-        resetQuantities[size.name] = 0;
-      });
-
-      setFormData({
-        ...initialFormData,
-        quantities: resetQuantities,
-      });
+      setMessage(response.data.message || "Order updated successfully!");
+      // Optionally close modal after a short delay
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
-      console.error("Order error:", error);
-      setMessage(error.response?.data?.message || "Error placing order.");
+      console.error("Order update error:", error);
+      setMessage(error.response?.data?.message || "Error updating order.");
     }
   };
 
@@ -206,11 +219,11 @@ export default function PreOrder({ onClose }) {
           &times;
         </button>
         <h2 className="text-2xl text-center font-semibold mb-4">
-          Place Your T-Shirt Order
+          Update Your T-Shirt Order
         </h2>
         {message && <p className="mb-4 text-green-400">{message}</p>}
 
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit}>
           <div className="flex gap-8">
             {/* LEFT COLUMN - INPUT FIELDS */}
             <div className="flex-1 space-y-4">
@@ -357,7 +370,7 @@ export default function PreOrder({ onClose }) {
             type="submit"
             className="bg-black hover:bg-black/40 transition-colors text-white w-full py-3 rounded font-semibold mt-4"
           >
-            Submit Order
+            Update Your Order
           </button>
         </form>
       </div>

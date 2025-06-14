@@ -4,13 +4,13 @@ const {
   createPreorder,
   getAllPreorders,
   getPreorderById,
-  getUserPreorders
+  getUserPreorders,
+  updatePreorder,
+  deletePreorder,
+  updateOrderStatus
 } = require('../Controlers/preorderController');
 
-// Middleware to protect routes
 
-
-// ========== Routes ========== //
 
 // 🔒 Create a preorder (user must be logged in)
 router.post('/order', createPreorder);
@@ -23,5 +23,13 @@ router.get('/my-orders', getUserPreorders);
 
 // 🔒 Get a specific preorder by its ID
 router.get('/order/:id', getPreorderById);
+
+// 🔒 Update a specific preorder by its ID
+router.put('/order/:id', updatePreorder);
+
+router.put('/order/:id/status', updateOrderStatus);
+
+// 🔒 Delete a specific preorder by its ID
+router.delete('/order/:id', deletePreorder);
 
 module.exports = router;
