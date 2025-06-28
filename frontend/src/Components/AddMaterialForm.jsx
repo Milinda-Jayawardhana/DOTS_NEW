@@ -59,7 +59,7 @@ export default function AddMaterialForm() {
         />
         <button
           type="submit"
-          className="py-2 text-white transition bg-blue-600 rounded hover:bg-blue-700"
+          className="py-2 text-white transition bg-black hover:bg-black/80"
         >
           Add Material
         </button>
