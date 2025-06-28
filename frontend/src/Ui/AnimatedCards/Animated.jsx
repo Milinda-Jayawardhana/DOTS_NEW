@@ -130,13 +130,13 @@ export const Animated = ({ testimonials, autoplay = false }) => {
           <div className="flex gap-4 pt-12 md:pt-0">
             <button
               onClick={handlePrev}
-              className="flex items-center justify-center rounded-full h-7 w-7 bg-neutral-800 group/button hover:bg-yellow-600"
+              className="flex items-center justify-center rounded-full h-7 w-7 bg-neutral-800 group/button hover:bg-white/40"
             >
               <IconArrowLeft className="w-5 h-5 text-black transition-transform duration-300 dark:text-neutral-400 group-hover/button:text-white" />
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center justify-center rounded-full h-7 w-7 bg-neutral-800 group/button hover:bg-yellow-600"
+              className="flex items-center justify-center rounded-full h-7 w-7 bg-neutral-800 group/button hover:bg-white/40"
             >
               <IconArrowRight className="w-5 h-5 text-black transition-transform duration-300 dark:text-neutral-400 group-hover/button:text-white" />
             </button>
