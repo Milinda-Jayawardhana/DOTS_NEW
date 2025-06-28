@@ -20,6 +20,7 @@ const productSchema = mongoose.Schema(
             required: false
         }
     },
+    
     {
         timestamps: true
     }
