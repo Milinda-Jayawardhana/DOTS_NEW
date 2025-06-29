@@ -12,7 +12,10 @@ export default function AdminAddItems() {
   return (
     <div>
       <div className="p-6">
-        <h1 className="text-2xl font-bold">Add TShirt Items</h1>
+        <h1 className="text-3xl font-extrabold text-gray-800 dark:text-white tracking-tight flex items-center gap-3">
+          
+          Add <span className="text-blue-500 drop-shadow">TShirt Items</span>
+        </h1>
         <div className="flex gap-10 pt-10 justify-evenly">
           <AddColorForm></AddColorForm>
           <AddTypeForm></AddTypeForm>
@@ -25,8 +28,10 @@ export default function AdminAddItems() {
 
         <div className=" w-full h-3 bg-gray-700 "></div>
         <div className=" pt-10">
-          <h1 className="text-2xl font-bold py-5">
-            Add Items for Count Section
+          <h1 className="text-3xl font-extrabold py-5 flex items-center gap-2">
+            
+            Add <span className="text-yellow-400 drop-shadow">Items</span> for
+            Count
           </h1>
           <AddStatForm></AddStatForm>
         </div>

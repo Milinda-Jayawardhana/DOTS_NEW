@@ -8,36 +8,33 @@ export default function AdminOrders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   // inside AdminOrders component
-const handleStatusChange = async (orderId, newStatus) => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await axios.put(
-      `http://localhost:3000/api/order/${orderId}/status`,
-      { orderStatus: newStatus },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (response.data.success) {
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === orderId
-            ? { ...order, orderStatus: newStatus }
-            : order
-        )
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:3000/api/order/${orderId}/status`,
+        { orderStatus: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-    } else {
-      alert("Failed to update order status");
-    }
-  } catch (error) {
-    console.error("Status update failed:", error);
-    alert("Error updating status");
-  }
-};
 
+      if (response.data.success) {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, orderStatus: newStatus } : order
+          )
+        );
+      } else {
+        alert("Failed to update order status");
+      }
+    } catch (error) {
+      console.error("Status update failed:", error);
+      alert("Error updating status");
+    }
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -64,7 +61,9 @@ const handleStatusChange = async (orderId, newStatus) => {
 
   return (
     <div className="min-h-screen px-6 py-8">
-      <h1 className="text-2xl font-bold mb-6">All Orders</h1>
+      <h1 className="text-3xl font-extrabold text-gray-800 dark:text-white tracking-tight flex items-center gap-3 pb-10">
+        Your <span className="text-blue-500 drop-shadow">Orders</span>
+      </h1>
 
       {loading ? (
         <p>Loading orders...</p>
@@ -75,7 +74,7 @@ const handleStatusChange = async (orderId, newStatus) => {
           {orders.map((order) => (
             <div
               key={order._id}
-              className="flex items-center justify-between gap-4 border border-gray-300 rounded-lg p-4 shadow-md cursor-pointer  transition"
+              className="flex bg-gray-800 items-center justify-between gap-4 border border-gray-300 rounded-lg p-4 shadow-md cursor-pointer  transition"
             >
               {/* Order Info Column */}
               <div
@@ -218,7 +217,7 @@ const handleStatusChange = async (orderId, newStatus) => {
           </div>
         </div>
       )}
-
+      <div className=" py-5"></div>
       <Footer />
     </div>
   );

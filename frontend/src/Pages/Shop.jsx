@@ -184,10 +184,10 @@ export default function Shop() {
                 {orders.map((order) => (
                   <div
                     key={order._id}
-                    className="flex items-center justify-between border border-gray-300 rounded-lg shadow-sm  hover:shadow-md transition"
+                    className="flex bg-gray-800 lg:text-[18px] items-center justify-between border border-gray-300 rounded-lg shadow-sm  hover:shadow-md transition"
                     
                   >
-                    <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                    <div className="flex  flex-col md:flex-row md:items-center gap-4 p-4 cursor-pointer" onClick={() => setSelectedOrder(order)}>
                       <div
                         className="w-16 h-16 rounded bg-red-500 flex-shrink-0"
                         title="T-Shirt"
@@ -210,12 +210,12 @@ export default function Shop() {
                     <div className="flex flex-col items-center justify-center gap-3 p-4">
                       <p>
                         <strong>Status:</strong>{" "}
-                        <span className="text-blue-600">
+                        <span className="text-red-800 p-1 px-2 bg-white rounded-md font-semibold">
                           {order.orderStatus}
                         </span>
                       </p>
                       {order.orderStatus === "Confirmed" && (
-                      <button className="bg-green-500 text-white py-2 px-4 rounded">
+                      <button className="bg-green-500 font-semibold text-white py-2 px-4 rounded">
                         Do your Advanced Payments
                       </button>)}
                     </div>

@@ -49,19 +49,19 @@ export default function AddCountForm() {
   };
 
   return (
-    <div className="p-5 bg-white rounded-lg shadow-lg w-80">
-      <h2 className="text-lg font-semibold text-gray-800">Add New Count</h2>
+    <div className="p-8 bg-gray-800 rounded-lg shadow-lg w-96">
+      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        Add New Count
+      </h2>
 
-      {message && <p className="text-green-600">{message}</p>}
-      {error && <p className="text-red-600">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input
           type="text"
           placeholder="Enter count name"
           value={countName}
           onChange={(e) => setCountName(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <input
@@ -69,12 +69,12 @@ export default function AddCountForm() {
           placeholder="Enter count value"
           value={countValue}
           onChange={(e) => setCountValue(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <button
           type="submit"
-          className="py-2 text-white transition bg-black hover:bg-black/80"
+          className="w-full py-2 bg-black text-white rounded-md hover:bg-black/80 font-semibold"
         >
           Add Count
         </button>
