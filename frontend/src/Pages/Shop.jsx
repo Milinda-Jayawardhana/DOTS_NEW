@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import PreOrderUpdate from "../Components/PreOrderUpdate";
+import PayHereForm from "../Components/PayhereForm";
 
 export default function Shop() {
   const [popup, setPopup] = useState(null);
@@ -309,9 +310,17 @@ export default function Shop() {
                         </span>
                       </p>
                       {order.orderStatus === "Confirmed" && (
-                        <button className="bg-green-500 font-semibold text-white py-2 px-4 rounded">
-                          Do your Advanced Payments
-                        </button>
+                        <PayHereForm
+                          amount={750 * (order.tshirtDetails?.quantity || 1)}
+                          name={order.customerName}
+                          contact={order.telephone}
+                          orderId={order.orderId || order._id}
+                          onPaymentSuccess={() => {
+                            alert("Payment successful!");
+                            // Optionally refresh orders or update status here
+                          }}
+                          onError={(msg) => alert(msg)}
+                        />
                       )}
                     </div>
                   </div>
@@ -442,7 +451,9 @@ export default function Shop() {
                           if (!confirm) return;
 
                           await axios.delete(
-                            `${import.meta.env.VITE_API_URL}/api/order/${selectedOrder._id}`,
+                            `${import.meta.env.VITE_API_URL}/api/order/${
+                              selectedOrder._id
+                            }`,
                             {
                               headers: {
                                 Authorization: `Bearer ${token}`,
