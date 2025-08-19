@@ -12,7 +12,7 @@ export default function AdminOrders() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:3000/api/order/${orderId}/status`,
+        `${import.meta.env.VITE_API_URL}/api/order/${orderId}/status`,
         { orderStatus: newStatus },
         {
           headers: {
@@ -40,7 +40,7 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/api/order", {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/order`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

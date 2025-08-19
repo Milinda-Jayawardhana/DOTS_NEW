@@ -29,7 +29,7 @@ export default function Counts({ onClose, onSelectCount }) {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/counts");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/counts`);
         if (response.data && Array.isArray(response.data.tshirtCounts)) {
           setCounts(response.data.tshirtCounts);
         } else {
@@ -56,7 +56,7 @@ export default function Counts({ onClose, onSelectCount }) {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `http://localhost:3000/api/counts/${editingCount._id}`,
+        `${import.meta.env.VITE_API_URL}/api/counts/${editingCount._id}`,
         {
           name: editingCount.name,
           price: editingCount.price,
@@ -84,7 +84,7 @@ export default function Counts({ onClose, onSelectCount }) {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.delete(
-        `http://localhost:3000/api/counts/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/counts/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

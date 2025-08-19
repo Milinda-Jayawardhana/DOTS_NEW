@@ -15,7 +15,7 @@ export default function GetAllContacts() {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/contacts");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contacts`);
         const data = await res.json();
 
         console.log("Response from API:", data); // Log the data for debugging
@@ -46,7 +46,7 @@ export default function GetAllContacts() {
   const handleDelete = async (contactId) => {
     try {
       const res = await fetch(
-        `http://localhost:3000/api/contacts/${contactId}`,
+        `${import.meta.env.VITE_API_URL}/api/contacts/${contactId}`,
         {
           method: "DELETE",
         }
