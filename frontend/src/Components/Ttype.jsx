@@ -24,7 +24,7 @@ export default function Ttype({ onClose, onSelectType }) {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/types");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/types`);
         if (response.data && Array.isArray(response.data.types)) {
           setTypes(response.data.types);
         } else {
@@ -49,7 +49,7 @@ export default function Ttype({ onClose, onSelectType }) {
     if (!editingType) return;
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/types/${editingType._id}`,
+        `${import.meta.env.VITE_API_URL}/api/types/${editingType._id}`,
         {
           name: editingType.name,
           price: editingType.price,
@@ -72,7 +72,7 @@ export default function Ttype({ onClose, onSelectType }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/types/${id}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/types/${id}`);
       if (response.status === 200) {
         setTypes((prev) => prev.filter((type) => type._id !== id));
         console.log("Type deleted successfully");

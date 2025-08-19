@@ -33,7 +33,7 @@ export default function Shop() {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:3000/api/my-orders",
+          `${import.meta.env.VITE_API_URL}/api/my-orders`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -74,12 +74,17 @@ export default function Shop() {
   const averageCost = calculateTotalPrice();
 
   const SelectionBox = ({ label, imgSrc, onClick }) => (
-    <div className="w-[150px] h-[160px] bg-gray-700 rounded-lg flex flex-col items-center">
+    <div className="w-[150px] h-[160px] bg-gray-700 rounded-lg flex flex-col items-center relative group">
       <div
-        className="relative w-[150px] h-[150px] bg-white rounded-lg shadow-2xl flex justify-center items-center cursor-pointer"
+        className="relative w-[150px] h-[150px] bg-white/30 rounded-lg shadow-2xl flex justify-center items-center cursor-pointer overflow-visible"
         onClick={onClick}
       >
-        <img src={imgSrc} alt={label} className="w-[80%]" />
+        <img
+          src={imgSrc}
+          alt={label}
+          className="w-[80%] transition-transform group-hover:scale-110 group-hover:z-30 duration-300"
+          style={{ zIndex: 1 }}
+        />
       </div>
       <div className="h-[22px] mt-1 text-white">{label}</div>
     </div>
@@ -94,6 +99,7 @@ export default function Shop() {
           </div>
 
           {/* Selection Grid */}
+
           <div className="grid gap-6 justify-items-center grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             <SelectionBox
               label="Count"
@@ -122,50 +128,136 @@ export default function Shop() {
             />
           </div>
 
-          {/* Selected Items Summary */}
-          <div className="p-5 mt-5 text-white bg-gray-800 rounded-lg">
-            <h3 className="text-lg font-semibold">Selected Items:</h3>
-            {selectedCount && <p>Count: {selectedCount.name}</p>}
-            {selectedMaterial && <p>Material: {selectedMaterial.name}</p>}
-            {selectedType && <p>Type: {selectedType.name}</p>}
-            {selectedColours.length > 0 && (
-              <p>Colours: {selectedColours.map((c) => c.name).join(", ")}</p>
-            )}
-            {selectedSizes.length > 0 && (
-              <p>Sizes: {selectedSizes.map((s) => s.name).join(", ")}</p>
-            )}
-          </div>
+          <div className="mt-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 rounded-2xl shadow-xl p-6 border border-gray-700 backdrop-blur-md flex flex-col lg:flex-row justify-between gap-20 items-stretch">
+            {/* Left Side - Selected Items */}
+            <div className="flex-1 min-w-0 flex flex-col h-full">
+              <h3 className="text-2xl font-bold text-blue-400 flex items-center gap-2 mb-4">
+                <span className="text-3xl">🛒</span> Selected Items
+              </h3>
 
-          {/* Cost Display */}
-          <div className="flex flex-col items-start justify-between gap-3 text-xl sm:flex-row">
-            <h2>Average Cost: Rs{averageCost.toFixed(2)}</h2>
-            <button
-              className="text-red-500"
-              onClick={() => {
-                setSelectedCount(null);
-                setSelectedMaterial(null);
-                setSelectedColours([]);
-                setSelectedSizes([]);
-                setSelectedType(null);
-              }}
-            >
-              Reset
-            </button>
-          </div>
-          <div className="flex items-center justify-center mt-5">
-            <button
-              onClick={() => {
-                const token = localStorage.getItem("token");
-                if (token) {
-                  setShowModal(true);
-                } else {
-                  navigate("/login");
-                }
-              }}
-              className="bg-gray-500 text-white py-2 px-10 rounded"
-            >
-              Place an Order
-            </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-5 ">
+                {/* Count */}
+                <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
+                  <span className="font-semibold text-white">Count:</span>
+                  <span
+                    className={`text-blue-300 ${
+                      !selectedCount && "italic opacity-60"
+                    }`}
+                  >
+                    {selectedCount ? selectedCount.name : "Select..."}
+                  </span>
+                </div>
+
+                {/* Material */}
+                <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
+                  <span className="font-semibold text-white">Material:</span>
+                  <span
+                    className={`text-blue-300 ${
+                      !selectedMaterial && "italic opacity-60"
+                    }`}
+                  >
+                    {selectedMaterial ? selectedMaterial.name : "Select..."}
+                  </span>
+                </div>
+
+                {/* Type + Colours */}
+                <div className="col-span-1 sm:col-span-2 flex flex-col lg:flex-row gap-3">
+                  <div className="flex-1 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
+                    <span className="font-semibold text-white">Type:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        !selectedType && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedType ? selectedType.name : "Select..."}
+                    </span>
+                  </div>
+                  <div className="flex-1 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
+                    <span className="font-semibold text-white">Colours:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        selectedColours.length === 0 && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedColours.length > 0
+                        ? selectedColours.map((c) => c.name).join(", ")
+                        : "Select..."}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sizes */}
+                <div className="col-span-1 sm:col-span-2 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
+                  <span className="font-semibold text-white">Sizes:</span>
+                  <span
+                    className={`text-blue-300 ${
+                      selectedSizes.length === 0 && "italic opacity-60"
+                    }`}
+                  >
+                    {selectedSizes.length > 0
+                      ? selectedSizes.map((s) => s.name).join(", ")
+                      : "Select..."}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Cost & Reset */}
+            <div className="flex flex-col items-center justify-between gap-4 h-full lg:w-80 w-full">
+              <div className="flex flex-col items-center justify-center bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-xl shadow-lg px-6 py-5 relative overflow-hidden lg:w-80 w-full">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-transparent to-red-400/20 animate-pulse"></div>
+
+                <h2 className="text-3xl font-extrabold text-white drop-shadow-md flex items-center gap-3 z-10">
+                  <span className="text-4xl">💰</span>
+                  <span>
+                    Rs{" "}
+                    <span className="bg-gradient-to-r from-white via-yellow-200 to-yellow-400 bg-clip-text text-transparent">
+                      {averageCost.toFixed(2)}
+                    </span>
+                  </span>
+                </h2>
+                <p className="text-sm text-yellow-100 mt-1 z-10">
+                  Average Cost
+                </p>
+
+                <button
+                  className="mt-4 flex items-center gap-2 text-white hover:text-red-100 bg-red-700 hover:bg-red-600 transition px-5 py-2 rounded-lg font-semibold shadow-lg z-10"
+                  onClick={() => {
+                    setSelectedCount(null);
+                    setSelectedMaterial(null);
+                    setSelectedColours([]);
+                    setSelectedSizes([]);
+                    setSelectedType(null);
+                  }}
+                >
+                  <span className="text-xl">🔄</span> Reset
+                </button>
+              </div>
+              <div className="flex items-center justify-center mt-6">
+                <button
+                  onClick={() => {
+                    const token = localStorage.getItem("token");
+                    if (token) {
+                      setShowModal(true);
+                    } else {
+                      navigate("/login");
+                    }
+                  }}
+                  className="relative bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 
+               text-white font-bold text-lg px-12 py-3 rounded-full shadow-lg 
+               overflow-hidden transition-all duration-300 
+               hover:scale-105 hover:shadow-2xl hover:from-green-400 hover:to-teal-400"
+                >
+                  {/* Glow Layer */}
+                  <span className="absolute inset-0 rounded-full border-2 border-white/40 animate-pulse"></span>
+
+                  {/* Icon + Text */}
+                  <span className="relative flex items-center gap-2">
+                    🚀 Place an Order
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
 
           {showModal && <PreOrder onClose={() => setShowModal(false)} />}
@@ -185,9 +277,11 @@ export default function Shop() {
                   <div
                     key={order._id}
                     className="flex bg-gray-800 lg:text-[18px] items-center justify-between border border-gray-300 rounded-lg shadow-sm  hover:shadow-md transition"
-                    
                   >
-                    <div className="flex  flex-col md:flex-row md:items-center gap-4 p-4 cursor-pointer" onClick={() => setSelectedOrder(order)}>
+                    <div
+                      className="flex  flex-col md:flex-row md:items-center gap-4 p-4 cursor-pointer"
+                      onClick={() => setSelectedOrder(order)}
+                    >
                       <div
                         className="w-16 h-16 rounded bg-red-500 flex-shrink-0"
                         title="T-Shirt"
@@ -215,9 +309,10 @@ export default function Shop() {
                         </span>
                       </p>
                       {order.orderStatus === "Confirmed" && (
-                      <button className="bg-green-500 font-semibold text-white py-2 px-4 rounded">
-                        Do your Advanced Payments
-                      </button>)}
+                        <button className="bg-green-500 font-semibold text-white py-2 px-4 rounded">
+                          Do your Advanced Payments
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -232,7 +327,7 @@ export default function Shop() {
             onClick={() => setSelectedOrder(null)}
           >
             <div
-              className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative text-black"
+              className="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative text-white"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -261,59 +356,70 @@ export default function Shop() {
               </p>
               <div className="mt-3">
                 <p className="font-semibold">T-Shirt Details:</p>
-                <ul className="list-disc ml-5 text-sm mt-1 space-y-1">
-                  <li>Material: {selectedOrder.tshirtDetails.material}</li>
-                  <li>
-                    Printing Type: {selectedOrder.tshirtDetails.printingType}
-                  </li>
-                  <li>
-                    Total Quantity: {selectedOrder.tshirtDetails.quantity}
-                  </li>
-                  <li>
-                    Sizes:
-                    <ul className="ml-4 list-disc">
-                      {selectedOrder.tshirtDetails.quantities.map(
-                        (q, index) => (
-                          <li key={index}>
-                            {q.size}: {q.count}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </li>
-                  <li>
-                    Buttons: {selectedOrder.tshirtDetails.buttons.count} (
-                    {selectedOrder.tshirtDetails.buttons.colour})
-                  </li>
-                  <li>
-                    Collars:{" "}
-                    {selectedOrder.tshirtDetails.collars?.join(", ") || "None"}
-                  </li>
-                  <li>
-                    Piping:{" "}
-                    {selectedOrder.tshirtDetails.piping?.join(", ") || "None"}
-                  </li>
-                  <li>
-                    Finishing:{" "}
-                    {selectedOrder.tshirtDetails.finishing?.join(", ") ||
-                      "None"}
-                  </li>
-                  <li>
-                    Label:{" "}
-                    {selectedOrder.tshirtDetails.label?.join(", ") || "None"}
-                  </li>
-                  <li>
-                    Outlines:{" "}
-                    {selectedOrder.tshirtDetails.outlines?.join(", ") || "None"}
-                  </li>
-                  <li>
-                    Sleeve:{" "}
-                    {selectedOrder.tshirtDetails.sleeve?.join(", ") || "None"}
-                  </li>
-                </ul>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-1 text-sm">
+                  {/* Column 1 */}
+                  <ul className="list-disc ml-5 space-y-1">
+                    <li>Material: {selectedOrder.tshirtDetails.material}</li>
+                    <li>
+                      Printing Type: {selectedOrder.tshirtDetails.printingType}
+                    </li>
+                    <li>
+                      Total Quantity: {selectedOrder.tshirtDetails.quantity}
+                    </li>
+                    <li>
+                      Sizes:
+                      <ul className="ml-4 list-disc">
+                        {selectedOrder.tshirtDetails.quantities.map(
+                          (q, index) => (
+                            <li key={index}>
+                              {q.size}: {q.count}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </li>
+                  </ul>
+
+                  {/* Column 2 */}
+                  <ul className="list-disc ml-5 space-y-1">
+                    <li>
+                      Buttons: {selectedOrder.tshirtDetails.buttons.count} (
+                      {selectedOrder.tshirtDetails.buttons.colour})
+                    </li>
+                    <li>
+                      Collars:{" "}
+                      {selectedOrder.tshirtDetails.collars?.join(", ") ||
+                        "None"}
+                    </li>
+                    <li>
+                      Piping:{" "}
+                      {selectedOrder.tshirtDetails.piping?.join(", ") || "None"}
+                    </li>
+                    <li>
+                      Finishing:{" "}
+                      {selectedOrder.tshirtDetails.finishing?.join(", ") ||
+                        "None"}
+                    </li>
+                    <li>
+                      Label:{" "}
+                      {selectedOrder.tshirtDetails.label?.join(", ") || "None"}
+                    </li>
+                    <li>
+                      Outlines:{" "}
+                      {selectedOrder.tshirtDetails.outlines?.join(", ") ||
+                        "None"}
+                    </li>
+                    <li>
+                      Sleeve:{" "}
+                      {selectedOrder.tshirtDetails.sleeve?.join(", ") || "None"}
+                    </li>
+                  </ul>
+                </div>
               </div>
+
               {/* Action Buttons */}
-              
+
               <div className="flex justify-end gap-4 mt-6">
                 {selectedOrder.orderStatus === "Pending" && (
                   <>
@@ -336,7 +442,7 @@ export default function Shop() {
                           if (!confirm) return;
 
                           await axios.delete(
-                            `http://localhost:3000/api/order/${selectedOrder._id}`,
+                            `${import.meta.env.VITE_API_URL}/api/order/${selectedOrder._id}`,
                             {
                               headers: {
                                 Authorization: `Bearer ${token}`,
@@ -362,7 +468,6 @@ export default function Shop() {
                   </>
                 )}
               </div>
-              
             </div>
           </div>
         )}

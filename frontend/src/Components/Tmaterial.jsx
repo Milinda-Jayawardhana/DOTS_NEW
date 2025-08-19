@@ -31,7 +31,7 @@ export default function Tmaterial({ onClose, onSelectMaterial }) {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/material");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/material`);
         if (response.data && Array.isArray(response.data.materials)) {
           setMaterials(response.data.materials);
         } else {
@@ -52,7 +52,7 @@ export default function Tmaterial({ onClose, onSelectMaterial }) {
   // Handle delete material
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/material/${id}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/material/${id}`);
       if (response.status === 200) {
         setMaterials((prev) => prev.filter((material) => material._id !== id));
         console.log("Material deleted successfully");
@@ -72,7 +72,7 @@ export default function Tmaterial({ onClose, onSelectMaterial }) {
     if (!editingMaterial) return;
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/material/${editingMaterial._id}`,
+        `${import.meta.env.VITE_API_URL}/api/material/${editingMaterial._id}`,
         {
           name: editingMaterial.name,
           price: editingMaterial.price,

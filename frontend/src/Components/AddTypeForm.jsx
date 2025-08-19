@@ -15,7 +15,7 @@ export default function AddTtypeForm() {
     const newType = { name: typeName, price: parseFloat(typePrice) };
 
     try {
-      const response = await fetch("http://localhost:3000/api/types", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/types`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newType),
