@@ -54,10 +54,10 @@ export default function PreOrderUpdate({ orderData, onClose }) {
     const fetchOptions = async () => {
       try {
         const [matRes, typeRes, sizeRes, colorRes] = await Promise.all([
-          axios.get("http://localhost:3000/api/material"),
-          axios.get("http://localhost:3000/api/types"),
-          axios.get("http://localhost:3000/api/sizes"),
-          axios.get("http://localhost:3000/api/colors"),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/material`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/types`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/sizes`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/colors`),
         ]);
 
         setMaterials(matRes.data.materials || []);
@@ -168,7 +168,7 @@ export default function PreOrderUpdate({ orderData, onClose }) {
 
       // Use PUT for update, and use the order's _id
       const response = await axios.put(
-        `http://localhost:3000/api/order/${orderData._id}`,
+        `${import.meta.env.VITE_API_URL}/api/order/${orderData._id}`,
         payload,
         {
           headers: {

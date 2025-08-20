@@ -33,7 +33,7 @@ export default function AddStatForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/stats",
+        `${import.meta.env.VITE_API_URL}/api/stats`,
         newStat,
         {
           headers: {
@@ -52,19 +52,19 @@ export default function AddStatForm() {
   };
 
   return (
-    <div className="p-5 bg-white rounded-lg shadow-lg w-80">
-      <h2 className="text-lg font-semibold text-gray-800">Add New Stat</h2>
-
-      {message && <p className="text-green-600">{message}</p>}
-      {error && <p className="text-red-600">{error}</p>}
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-4">
+    <div className="p-8 bg-gray-800 rounded-lg shadow-lg w-96">
+      <h2 className="text-2xl font-bold text-white mb-6 text-center">
+        Add New Stat
+      </h2>
+      {message && <p className="text-green-400 mb-2 text-center">{message}</p>}
+      {error && <p className="text-red-400 mb-2 text-center">{error}</p>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input
           type="number"
           placeholder="Enter number"
           value={num}
           onChange={(e) => setNum(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <input
@@ -72,7 +72,7 @@ export default function AddStatForm() {
           placeholder="Enter mark (e.g., +)"
           value={mark}
           onChange={(e) => setMark(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <input
@@ -80,12 +80,12 @@ export default function AddStatForm() {
           placeholder="Enter description"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <button
           type="submit"
-          className="py-2 text-white transition bg-black hover:bg-black/80"
+          className="w-full py-2 bg-black text-white rounded-md hover:bg-black/80 font-semibold"
         >
           Add Stat
         </button>

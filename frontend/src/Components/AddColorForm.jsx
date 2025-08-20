@@ -15,7 +15,7 @@ export default function AddColorForm() {
     const newColor = { name: colorName, price: parseFloat(colorPrice) };
 
     try {
-      const response = await fetch("http://localhost:3000/api/colors", { // ✅ Backend API URL
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/colors`, { // ✅ Backend API URL
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newColor),
@@ -37,16 +37,16 @@ export default function AddColorForm() {
     }
   };
 
-  return (
-    <div className="p-5 bg-white rounded-lg shadow-lg w-80">
-      <h2 className="text-lg font-semibold text-gray-800">Add New Color</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3 mt-4">
+    return (
+    <div className="p-8 bg-gray-800 rounded-lg shadow-lg w-96">
+      <h2 className="text-2xl font-bold text-white mb-6 text-center">Add New Color</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input
           type="text"
           placeholder="Enter color name"
           value={colorName}
           onChange={(e) => setColorName(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <input
@@ -54,12 +54,12 @@ export default function AddColorForm() {
           placeholder="Enter color price"
           value={colorPrice}
           onChange={(e) => setColorPrice(e.target.value)}
-          className="p-2 text-black border rounded"
+          className="p-3 bg-white text-black border border-gray-300 rounded-md"
           required
         />
         <button
           type="submit"
-          className="py-2 text-white transition bg-black hover:bg-black/80"
+          className="w-full py-2 bg-black text-white rounded-md hover:bg-black/80 font-semibold"
         >
           Add Color
         </button>
