@@ -71,15 +71,6 @@ export default function MobileNav() {
                 Shop
               </li>
             </Link>
-            <Link to="/blogs" onClick={toggleMenu}>
-              <li
-                className={`transition py-6 cursor-pointer ${getActiveClass(
-                  "/blogs"
-                )}`}
-              >
-                Blogs
-              </li>
-            </Link>
             <Link to="/contact" onClick={toggleMenu}>
               <li
                 className={`transition py-6 cursor-pointer ${getActiveClass(
