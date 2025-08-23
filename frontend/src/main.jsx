@@ -12,6 +12,9 @@ import Admin from './Pages/Admin.jsx';
 import AdminAddItems from './Pages/AdminAddItems.jsx';
 import AdminOrders from './Pages/AdminOrders.jsx'; // Import AdminOrders if needed
 import AdminComments from './Pages/AdminComments.jsx';
+import PaymentSuccess from './Components/Payment-Success.jsx';
+import PaymentFailed from './Components/Payment-failed.jsx';
+import PaymentCancelled from './Components/Payment-Cancelled.jsx';
 
 
 
@@ -31,6 +34,9 @@ const router = createBrowserRouter([
       { path: '/admin/add-items', element: <AdminAddItems /> },
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/comments', element: <AdminComments /> },
+      { path: '/payment-success', element: <PaymentSuccess /> },
+      { path: '/payment-failed', element: <PaymentFailed /> },
+      { path: '/payment-canceled', element: <PaymentCancelled /> },
 
     ],
   }

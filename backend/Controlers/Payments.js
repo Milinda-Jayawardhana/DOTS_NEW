@@ -72,10 +72,10 @@ const handlePaymentReturn = async (req, res) => {
 
     if (status === "Completed") {
       console.log(`✅ Payment successful (Return) for Order ID: ${order_id}`);
-      res.redirect(`${process.env.FRONTEND_URL}/payment-success`);
+      res.redirect(`${process.env.VITE_API_URL}/payment-success`);
     } else {
       console.log(`❌ Payment failed (Return) for Order ID: ${order_id}`);
-      res.redirect(`${process.env.FRONTEND_URL}/payment-failed`);
+      res.redirect(`${process.env.VITE_API_URL}/payment-failed`);
     }
   } else {
     res.status(405).end(); // Method Not Allowed
@@ -87,7 +87,7 @@ const handlePaymentCancel = async (req, res) => {
   if (req.method === "GET") {
     const { order_id } = req.query;
     console.log(`⚠️ Payment canceled by user for Order ID: ${order_id}`);
-    res.redirect(`${process.env.FRONTEND_URL}/payment-canceled`);
+    res.redirect(`${process.env.VITE_API_URL}/payment-canceled`);
   } else {
     res.status(405).end();
   }
