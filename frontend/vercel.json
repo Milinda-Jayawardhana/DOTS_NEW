@@ -36,6 +36,22 @@
       {
         "src": "/payment-canceled",
         "dest": "/"
+      },
+      {
+        "src": "/admin",
+        "dest": "/"
+      },
+      {
+        "src": "/admin/add-items",
+        "dest": "/"
+      },
+      {
+        "src": "/admin/orders",
+        "dest": "/"
+      },
+      {
+        "src": "/admin/comments",
+        "dest": "/"
       }
     ]
   }
