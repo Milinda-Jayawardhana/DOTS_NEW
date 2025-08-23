@@ -43,8 +43,7 @@ export default function PayHereForm({
   // ✅ Sandbox hash generator (frontend only)
   const generateHash = () => {
     const merchant_id = import.meta.env.VITE_PAYHERE_MERCHANT_ID || "1230061";
-    const merchant_secret =
-      import.meta.env.VITE_PAYHERE_MERCHANT_SECRET || "sandboxSecret"; // 🔹 for sandbox only
+    const merchant_secret = import.meta.env.VITE_PAYHERE_MERCHANT_SECRET; // 🔹 for sandbox only
     const currency = "LKR";
 
     const formattedAmount = parseFloat(amount)
