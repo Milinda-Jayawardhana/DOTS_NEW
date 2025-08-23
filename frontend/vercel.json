@@ -22,9 +22,20 @@
         "dest": "/"
       },
       {
-        "src": "/login/.*",
+        "src": "/login",
+        "dest": "/"
+      },
+      {
+        "src": "/payment-success",
+        "dest": "/"
+      },
+      {
+        "src": "/payment-failed",
+        "dest": "/"
+      },
+      {
+        "src": "/payment-canceled",
         "dest": "/"
       }
-      
     ]
   }
