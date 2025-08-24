@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import jwtDecode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 
 export default function PreOrder({ onClose }) {
-  const navigate = useNavigate();
   const initialFormData = {
     customerName: "",
     address: "",
@@ -126,14 +124,7 @@ export default function PreOrder({ onClose }) {
       const token = localStorage.getItem("token");
       if (!token) return setMessage("Please log in to place an order");
 
-      console.log("Auth header:", `Bearer ${token}`);
-
-      try {
-        const decoded = jwtDecode(token);
-        console.log("Decoded token:", decoded);
-      } catch (dErr) {
-        console.warn("Token decode failed:", dErr);
-      }
+      const decoded = jwtDecode(token);
 
       const formattedQuantities = Object.entries(formData.quantities).map(
         ([size, count]) => ({ size, count })
@@ -155,7 +146,7 @@ export default function PreOrder({ onClose }) {
         outlines: formData.outlines,
         sleeve: formData.sleeve,
       };
-      console.log("Order payload:", payload);
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/order`,
         payload,
@@ -180,15 +171,7 @@ export default function PreOrder({ onClose }) {
       });
     } catch (error) {
       console.error("Order error:", error);
-      console.error("Server response data:", error.response?.data);
       setMessage(error.response?.data?.message || "Error placing order.");
-
-      const serverMsg = String(error.response?.data?.message || "").toLowerCase();
-      if (serverMsg.includes("invalid signature") || error.response?.status === 401) {
-        localStorage.removeItem("token");
-        setMessage("Session invalid. Please log in again.");
-        navigate("/login");
-      }
     }
   };
 
