@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 export default function PreOrder({ onClose }) {
+  const navigate = useNavigate();
   const initialFormData = {
     customerName: "",
     address: "",
@@ -117,14 +119,21 @@ export default function PreOrder({ onClose }) {
       }));
     }
   };
-/*
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
       if (!token) return setMessage("Please log in to place an order");
 
-      const decoded = jwtDecode(token);
+      console.log("Auth header:", `Bearer ${token}`);
+
+      try {
+        const decoded = jwtDecode(token);
+        console.log("Decoded token:", decoded);
+      } catch (dErr) {
+        console.warn("Token decode failed:", dErr);
+      }
 
       const formattedQuantities = Object.entries(formData.quantities).map(
         ([size, count]) => ({ size, count })
@@ -146,7 +155,7 @@ export default function PreOrder({ onClose }) {
         outlines: formData.outlines,
         sleeve: formData.sleeve,
       };
-
+      console.log("Order payload:", payload);
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/order`,
         payload,
@@ -171,89 +180,14 @@ export default function PreOrder({ onClose }) {
       });
     } catch (error) {
       console.error("Order error:", error);
-      setMessage(error.response?.data?.message || "Error placing order.");
-    }
-  };
-  */
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setMessage("Please log in to place an order");
-        return;
-      }
-
-      // Debug: log token (remove in production)
-      console.log("Submitting order, token present:", !!token);
-
-      // Convert quantities obj -> filtered array of numbers
-      const formattedQuantities = Object.entries(formData.quantities || {})
-        .map(([size, count]) => ({ size, count: Number(count || 0) }))
-        .filter((q) => q.count > 0);
-
-      // If quantity field empty, compute from quantities array
-      const totalQuantity =
-        Number(formData.quantity) ||
-        formattedQuantities.reduce((sum, q) => sum + q.count, 0);
-
-      const payload = {
-        customerName: String(formData.customerName || "").trim(),
-        address: String(formData.address || "").trim(),
-        telephone: String(formData.telephone || "").trim(),
-        quantity: Number(totalQuantity),
-        material: String(formData.material || ""),
-        printingType: String(formData.printingType || ""),
-        quantities: formattedQuantities,
-        collars: formData.collars || [],
-        piping: formData.piping || [],
-        finishing: formData.finishing || [],
-        label: formData.label || [],
-        buttons: {
-          count: Number(formData.buttons?.count || 0),
-          colour: String(formData.buttons?.colour || ""),
-        },
-        outlines: formData.outlines || [],
-        sleeve: formData.sleeve || [],
-      };
-
-      // Debug: show payload before sending
-      console.log("Order payload:", payload);
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/order`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("Order response:", response.data);
-      setMessage(response.data.message || "Order placed successfully!");
-
-      // reset form
-      const resetQuantities = {};
-      (sizes || []).forEach((size) => {
-        resetQuantities[size.name] = 0;
-      });
-      setFormData({
-        ...initialFormData,
-        quantities: resetQuantities,
-      });
-    } catch (error) {
-      console.error("Order error:", error);
-      // show full server response for debugging
       console.error("Server response data:", error.response?.data);
-      const serverMsg = error.response?.data?.message || error.response?.data || error.message;
-      setMessage(serverMsg || "Error placing order.");
+      setMessage(error.response?.data?.message || "Error placing order.");
 
-      // if token problem -> clear and prompt login
-      if (error.response?.status === 401 || (String(serverMsg || "").toLowerCase().includes("invalid signature"))) {
+      const serverMsg = String(error.response?.data?.message || "").toLowerCase();
+      if (serverMsg.includes("invalid signature") || error.response?.status === 401) {
         localStorage.removeItem("token");
+        setMessage("Session invalid. Please log in again.");
+        navigate("/login");
       }
     }
   };
