@@ -118,108 +118,42 @@ export default function PreOrder({ onClose }) {
     }
   };
 
-  // Debug function to check token
-  const debugToken = () => {
-    const token = localStorage.getItem("token");
-    console.log("=== TOKEN DEBUG INFO ===");
-    console.log("Token exists:", !!token);
-    console.log("Token length:", token ? token.length : 0);
-    console.log("Token (first 50 chars):", token ? token.substring(0, 50) + "..." : "No token");
-    
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log("Decoded token:", decoded);
-        console.log("Token expiry:", new Date(decoded.exp * 1000));
-        console.log("Current time:", new Date());
-        console.log("Is token expired:", decoded.exp * 1000 < Date.now());
-        
-        // Check if token is about to expire (within 5 minutes)
-        const fiveMinutesFromNow = Date.now() + (5 * 60 * 1000);
-        console.log("Token expires soon:", decoded.exp * 1000 < fiveMinutesFromNow);
-      } catch (decodeError) {
-        console.error("Error decoding token:", decodeError);
-      }
-    }
-    console.log("========================");
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Debug token before making request
-    debugToken();
-    
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        setMessage("Please log in to place an order");
-        return;
-      }
+      if (!token) return setMessage("Please log in to place an order");
 
-      // Check if token is valid and not expired
-      let decoded;
-      try {
-        decoded = jwtDecode(token);
-        
-        // Check if token is expired
-        if (decoded.exp * 1000 < Date.now()) {
-          setMessage("Your session has expired. Please log in again.");
-          localStorage.removeItem("token"); // Clear expired token
-          return;
-        }
-        
-        console.log("Token is valid, user email:", decoded.email);
-      } catch (decodeError) {
-        console.error("Token decode error:", decodeError);
-        setMessage("Invalid session. Please log in again.");
-        localStorage.removeItem("token");
-        return;
-      }
+      const decoded = jwtDecode(token);
 
-      // Ensure quantities is properly formatted and cleaned
-      const formattedQuantities = Object.entries(formData.quantities)
-        .map(([size, count]) => ({
-          size: String(size).trim(),
-          count: parseInt(count) || 0
-        }))
-        .filter(item => item.count > 0); // Only include non-zero quantities
+      const formattedQuantities = Object.entries(formData.quantities).map(
+        ([size, count]) => ({ size, count })
+      );
 
-      // Clean and validate the payload
       const payload = {
-        customerName: String(formData.customerName).trim(),
-        address: String(formData.address).trim(),
-        telephone: String(formData.telephone).trim(),
-        quantity: String(formData.quantity).trim(),
-        material: String(formData.material).trim(),
-        printingType: String(formData.printingType).trim(),
+        customerName: formData.customerName,
+        address: formData.address,
+        telephone: formData.telephone,
+        quantity: formData.quantity,
+        material: formData.material,
+        printingType: formData.printingType,
         quantities: formattedQuantities,
-        collars: Array.isArray(formData.collars) ? formData.collars : [],
-        piping: Array.isArray(formData.piping) ? formData.piping : [],
-        finishing: Array.isArray(formData.finishing) ? formData.finishing : [],
-        label: Array.isArray(formData.label) ? formData.label : [],
-        buttons: {
-          count: String(formData.buttons.count || "").trim(),
-          colour: String(formData.buttons.colour || "").trim()
-        },
-        outlines: Array.isArray(formData.outlines) ? formData.outlines : [],
-        sleeve: Array.isArray(formData.sleeve) ? formData.sleeve : [],
+        collars: formData.collars,
+        piping: formData.piping,
+        finishing: formData.finishing,
+        label: formData.label,
+        buttons: formData.buttons,
+        outlines: formData.outlines,
+        sleeve: formData.sleeve,
       };
-
-      // Log payload for debugging
-      console.log("Sending payload:", JSON.stringify(payload, null, 2));
-      console.log("Using API URL:", import.meta.env.VITE_API_URL);
-      console.log("Token being sent:", token.substring(0, 50) + "...");
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/order`,
         payload,
         {
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          timeout: 30000, // 30 second timeout
         }
       );
 
@@ -237,29 +171,7 @@ export default function PreOrder({ onClose }) {
       });
     } catch (error) {
       console.error("Order error:", error);
-      
-      // Log more detailed error information
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-        console.error("Error response headers:", error.response.headers);
-        
-        // Handle specific error cases
-        if (error.response.status === 401) {
-          setMessage("Authentication failed. Please log in again.");
-          localStorage.removeItem("token"); // Clear potentially invalid token
-        } else if (error.response.status === 403) {
-          setMessage("Access denied. Please check your permissions.");
-        } else {
-          setMessage(error.response?.data?.message || "Error placing order.");
-        }
-      } else if (error.request) {
-        console.error("Network error - no response received:", error.request);
-        setMessage("Network error. Please check your connection and try again.");
-      } else {
-        console.error("Request setup error:", error.message);
-        setMessage("Request failed. Please try again.");
-      }
+      setMessage(error.response?.data?.message || "Error placing order.");
     }
   };
 
@@ -296,20 +208,7 @@ export default function PreOrder({ onClose }) {
         <h2 className="text-2xl text-center font-semibold mb-4">
           Place Your T-Shirt Order
         </h2>
-        {message && (
-          <p className={`mb-4 ${message.includes('Error') || message.includes('failed') || message.includes('expired') ? 'text-red-400' : 'text-green-400'}`}>
-            {message}
-          </p>
-        )}
-
-        {/* Debug button - remove in production */}
-        <button 
-          type="button" 
-          onClick={debugToken}
-          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Debug Token
-        </button>
+        {message && <p className="mb-4 text-green-400">{message}</p>}
 
         <form onSubmit={handleSubmit} >
           <div className="flex gap-8">
