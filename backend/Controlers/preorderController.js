@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Preorder = require("../Model/preorderModel");
 const { secretKey } = require("../Configuration/jwtConfig");
-
+/*
 const createPreorder = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -51,6 +51,144 @@ const createPreorder = async (req, res) => {
     res.status(400).json({
       success: false,
       message: error.message,
+    });
+  }
+};*/
+
+const createPreorder = async (req, res) => {
+  try {
+    console.log("Received request body:", JSON.stringify(req.body, null, 2));
+    console.log("Request headers:", req.headers);
+
+    // Validate token
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "No token provided"
+      });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, secretKey);
+    } catch (jwtError) {
+      console.error("JWT verification failed:", jwtError);
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token"
+      });
+    }
+
+    const userEmail = decoded.email;
+
+    // Validate required fields
+    if (!req.body.customerName || !req.body.address || !req.body.telephone) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: customerName, address, or telephone"
+      });
+    }
+
+    // Parse and sanitize quantities array with better error handling
+    let quantitiesArray = [];
+    if (req.body.quantities) {
+      if (Array.isArray(req.body.quantities)) {
+        quantitiesArray = req.body.quantities
+          .map((q) => {
+            if (!q || typeof q !== 'object') return null;
+            return {
+              size: String(q.size || '').trim(),
+              count: parseInt(q.count) || 0,
+            };
+          })
+          .filter(q => q && q.size && q.count > 0); // Only include valid entries
+      } else {
+        console.warn("quantities is not an array:", typeof req.body.quantities);
+      }
+    }
+
+    // Validate and sanitize array fields
+    const sanitizeArray = (field, defaultValue = []) => {
+      if (!field) return defaultValue;
+      if (Array.isArray(field)) return field;
+      if (typeof field === 'string') return [field]; // Handle single string
+      return defaultValue;
+    };
+
+    // Build the preorder data with better validation
+    const preorderData = {
+      userEmail: String(userEmail).trim(),
+      customerName: String(req.body.customerName || '').trim(),
+      address: String(req.body.address || '').trim(),
+      telephone: String(req.body.telephone || '').trim(),
+      tshirtDetails: {
+        quantity: String(req.body.quantity || '').trim(),
+        material: String(req.body.material || '').trim(),
+        printingType: String(req.body.printingType || '').trim(),
+        quantities: quantitiesArray,
+        collars: sanitizeArray(req.body.collars),
+        piping: sanitizeArray(req.body.piping),
+        finishing: sanitizeArray(req.body.finishing),
+        label: sanitizeArray(req.body.label),
+        buttons: {
+          count: String((req.body.buttons?.count || '')).trim(),
+          colour: String((req.body.buttons?.colour || '')).trim(),
+        },
+        outlines: sanitizeArray(req.body.outlines),
+        sleeve: sanitizeArray(req.body.sleeve),
+      },
+    };
+
+    console.log("Sanitized preorder data:", JSON.stringify(preorderData, null, 2));
+
+    // Validate that we have the essential data
+    if (!preorderData.customerName || !preorderData.address || !preorderData.telephone) {
+      return res.status(400).json({
+        success: false,
+        message: "Customer name, address, and telephone are required"
+      });
+    }
+
+    const preorder = new Preorder(preorderData);
+    const savedPreorder = await preorder.save();
+
+    console.log("Order saved successfully:", savedPreorder._id);
+
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      data: savedPreorder,
+    });
+
+  } catch (error) {
+    console.error("Detailed error:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+
+    // Handle Mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: validationErrors
+      });
+    }
+
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "Duplicate entry detected"
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error: " + error.message,
     });
   }
 };

@@ -126,33 +126,45 @@ export default function PreOrder({ onClose }) {
 
       const decoded = jwtDecode(token);
 
-      const formattedQuantities = Object.entries(formData.quantities).map(
-        ([size, count]) => ({ size, count })
-      );
+      // Ensure quantities is properly formatted and cleaned
+      const formattedQuantities = Object.entries(formData.quantities)
+        .map(([size, count]) => ({
+          size: String(size).trim(),
+          count: parseInt(count) || 0
+        }))
+        .filter(item => item.count > 0); // Only include non-zero quantities
 
+      // Clean and validate the payload
       const payload = {
-        customerName: formData.customerName,
-        address: formData.address,
-        telephone: formData.telephone,
-        quantity: formData.quantity,
-        material: formData.material,
-        printingType: formData.printingType,
+        customerName: String(formData.customerName).trim(),
+        address: String(formData.address).trim(),
+        telephone: String(formData.telephone).trim(),
+        quantity: String(formData.quantity).trim(),
+        material: String(formData.material).trim(),
+        printingType: String(formData.printingType).trim(),
         quantities: formattedQuantities,
-        collars: formData.collars,
-        piping: formData.piping,
-        finishing: formData.finishing,
-        label: formData.label,
-        buttons: formData.buttons,
-        outlines: formData.outlines,
-        sleeve: formData.sleeve,
+        collars: Array.isArray(formData.collars) ? formData.collars : [],
+        piping: Array.isArray(formData.piping) ? formData.piping : [],
+        finishing: Array.isArray(formData.finishing) ? formData.finishing : [],
+        label: Array.isArray(formData.label) ? formData.label : [],
+        buttons: {
+          count: String(formData.buttons.count || "").trim(),
+          colour: String(formData.buttons.colour || "").trim()
+        },
+        outlines: Array.isArray(formData.outlines) ? formData.outlines : [],
+        sleeve: Array.isArray(formData.sleeve) ? formData.sleeve : [],
       };
+
+      // Log payload for debugging
+      console.log("Sending payload:", JSON.stringify(payload, null, 2));
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/order`,
         payload,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -171,6 +183,14 @@ export default function PreOrder({ onClose }) {
       });
     } catch (error) {
       console.error("Order error:", error);
+      
+      // Log more detailed error information
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      }
+      
       setMessage(error.response?.data?.message || "Error placing order.");
     }
   };
