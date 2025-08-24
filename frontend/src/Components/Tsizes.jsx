@@ -31,7 +31,7 @@ export default function Sizes({ onClose, onSelectSizes }) {
   useEffect(() => {
     const fetchSizes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/sizes");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/sizes`);
         if (response.data && Array.isArray(response.data.sizes)) {
           setSizes(response.data.sizes);
         } else {
@@ -57,7 +57,7 @@ export default function Sizes({ onClose, onSelectSizes }) {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/sizes/${id}`
+        `${import.meta.env.VITE_API_URL}/api/sizes/${id}`
       );
       if (response.status === 200) {
         setSizes((prev) => prev.filter((size) => size._id !== id));
@@ -79,7 +79,7 @@ export default function Sizes({ onClose, onSelectSizes }) {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/sizes/${editingSize._id}`,
+        `${import.meta.env.VITE_API_URL}/api/sizes/${editingSize._id}`,
         {
           name: editingSize.name,
         }

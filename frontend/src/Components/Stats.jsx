@@ -11,7 +11,7 @@ export default function Stats() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/stats");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`);
         setStats(response.data.stats);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
@@ -36,7 +36,7 @@ export default function Stats() {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/api/stats/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/stats/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStats((prev) => prev.filter((s) => s._id !== id));
@@ -49,7 +49,7 @@ export default function Stats() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/api/stats/${editingStat._id}`,
+        `${import.meta.env.VITE_API_URL}/api/stats/${editingStat._id}`,
         {
           num: editingStat.num,
           mark: editingStat.mark,

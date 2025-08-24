@@ -50,11 +50,6 @@ export default function Nav() {
                 Shop
               </li>
             </Link>
-            <Link to="/blogs">
-              <li className={`transition border-b-2 cursor-pointer ${getActiveClass("/blogs")}`}>
-                Blogs
-              </li>
-            </Link>
             <Link to="/contact">
               <li className={`transition border-b-2 cursor-pointer ${getActiveClass("/contact")}`}>
                 Contact

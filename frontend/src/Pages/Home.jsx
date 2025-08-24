@@ -5,13 +5,13 @@ import Stats from "../Components/Stats";
 import { AnimatedCard } from "../Ui/AnimatedCards/AnimatedCard";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
+import { DraggableCardDemo } from "../Ui/DraggedCards/DraggableCardDemo";
 
 export default function Home() {
-
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/shop');
+    navigate("/shop");
   };
 
   return (
@@ -39,7 +39,10 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex justify-center w-full">
-                  <button className="relative flex items-center justify-center rounded-lg w-full sm:w-[65%]  h-9 text-[18px] sm:text-xl  bg-white text-black font-bold overflow-hidden group" onClick={handleClick}>
+                  <button
+                    className="relative flex items-center justify-center rounded-lg w-full sm:w-[65%]  h-9 text-[18px] sm:text-xl  bg-white text-black font-bold overflow-hidden group"
+                    onClick={handleClick}
+                  >
                     <span className="absolute transition-transform duration-300 transform group-hover:translate-x-[160%]">
                       Shop Now
                     </span>
@@ -72,7 +75,10 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-center w-full lg:pb-5 xl:pb-10 md:pb-4">
-                <button className="relative flex items-center justify-center rounded-lg w-[65%] xl:w-[70%] h-11 px-2 py-3 text-xl xl:text-2xl bg-white text-black font-bold overflow-hidden group" onClick={handleClick}>
+                <button
+                  className="relative flex items-center justify-center rounded-lg w-[65%] xl:w-[70%] h-11 px-2 py-3 text-xl xl:text-2xl bg-white text-black font-bold overflow-hidden group"
+                  onClick={handleClick}
+                >
                   <span className="absolute transition-transform duration-300 transform group-hover:translate-x-[160%]">
                     Shop Now
                   </span>
@@ -112,10 +118,18 @@ export default function Home() {
       <div className="">
         <div className="flex flex-col items-center gap-10 pt-16">
           <div className=" w-[90%] h-2 bg-gray-600 rounded-lg"></div>
-          <h2 className="text-3xl font-bold text-white/80 font-noto">What We Do?</h2>
+          <h2 className="text-3xl font-bold text-white/80 font-noto">
+            What We Do?
+          </h2>
         </div>
 
         <AnimatedCard></AnimatedCard>
+        <div className="flex flex-col items-center gap-10 pt-16">
+          <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-red-500 drop-shadow-lg mb-8 flex items-center gap-3">
+            Product Showcase
+          </h2>
+        </div>
+        <DraggableCardDemo></DraggableCardDemo>
         <Footer></Footer>
       </div>
     </div>

@@ -32,7 +32,7 @@ export default function Tcolours({ onClose, onSelectColours }) {
   useEffect(() => {
     const fetchColors = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/colors");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/colors`);
         if (response.data && Array.isArray(response.data.colors)) {
           setColors(response.data.colors);
         } else {
@@ -66,7 +66,7 @@ export default function Tcolours({ onClose, onSelectColours }) {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/colors/${editingColor._id}`,
+        `${import.meta.env.VITE_API_URL}/api/colors/${editingColor._id}`,
         {
           name: editingColor.name,
           price: editingColor.price,
@@ -91,7 +91,7 @@ export default function Tcolours({ onClose, onSelectColours }) {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/colors/${id}`
+        `${import.meta.env.VITE_API_URL}/api/colors/${id}`
       );
       if (response.status === 200) {
         setColors((prev) => prev.filter((color) => color._id !== id));

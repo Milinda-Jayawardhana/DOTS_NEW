@@ -17,9 +17,6 @@ function App() {
       case '/shop':
         document.title = 'DOTS/Shop';
         break;
-      case '/blogs':
-        document.title = 'DOTS/Blogs';
-        break;
       case '/contact':
         document.title = 'DOTS/Contact';
         break;
