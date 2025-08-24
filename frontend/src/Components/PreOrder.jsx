@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // Re-added this
 
 export default function PreOrder({ onClose }) {
+  const navigate = useNavigate(); // Re-added this
   const initialFormData = {
     customerName: "",
     address: "",
@@ -124,17 +126,37 @@ export default function PreOrder({ onClose }) {
       const token = localStorage.getItem("token");
       if (!token) return setMessage("Please log in to place an order");
 
-      const decoded = jwtDecode(token);
+      // Enhanced token validation
+      try {
+        const decoded = jwtDecode(token);
+        console.log("Token decoded successfully:", decoded);
+        
+        // Check if token is expired
+        const now = Date.now() / 1000;
+        if (decoded.exp && decoded.exp < now) {
+          localStorage.removeItem("token");
+          setMessage("Session expired. Please log in again.");
+          navigate("/login");
+          return;
+        }
+      } catch (decodeError) {
+        console.error("Token decode failed:", decodeError);
+        localStorage.removeItem("token");
+        setMessage("Invalid session. Please log in again.");
+        navigate("/login");
+        return;
+      }
 
-      const formattedQuantities = Object.entries(formData.quantities).map(
-        ([size, count]) => ({ size, count })
-      );
+      // Filter out empty quantities to avoid sending zeros
+      const formattedQuantities = Object.entries(formData.quantities)
+        .filter(([size, count]) => count && count > 0)
+        .map(([size, count]) => ({ size, count: parseInt(count, 10) }));
 
       const payload = {
-        customerName: formData.customerName,
-        address: formData.address,
-        telephone: formData.telephone,
-        quantity: formData.quantity,
+        customerName: formData.customerName.trim(),
+        address: formData.address.trim(),
+        telephone: formData.telephone.trim(),
+        quantity: parseInt(formData.quantity, 10), // Convert to number
         material: formData.material,
         printingType: formData.printingType,
         quantities: formattedQuantities,
@@ -142,10 +164,15 @@ export default function PreOrder({ onClose }) {
         piping: formData.piping,
         finishing: formData.finishing,
         label: formData.label,
-        buttons: formData.buttons,
+        buttons: {
+          count: formData.buttons.count ? parseInt(formData.buttons.count, 10) : 0,
+          colour: formData.buttons.colour
+        },
         outlines: formData.outlines,
         sleeve: formData.sleeve,
       };
+
+      console.log("Sending payload:", payload);
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/order`,
@@ -153,6 +180,7 @@ export default function PreOrder({ onClose }) {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -171,7 +199,21 @@ export default function PreOrder({ onClose }) {
       });
     } catch (error) {
       console.error("Order error:", error);
-      setMessage(error.response?.data?.message || "Error placing order.");
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
+      
+      const serverMessage = error.response?.data?.message || "Error placing order.";
+      setMessage(serverMessage);
+
+      // Handle authentication errors
+      if (error.response?.status === 401 || 
+          error.response?.status === 403 ||
+          serverMessage.toLowerCase().includes("invalid") ||
+          serverMessage.toLowerCase().includes("unauthorized")) {
+        localStorage.removeItem("token");
+        setMessage("Session invalid. Please log in again.");
+        navigate("/login");
+      }
     }
   };
 
@@ -208,9 +250,13 @@ export default function PreOrder({ onClose }) {
         <h2 className="text-2xl text-center font-semibold mb-4">
           Place Your T-Shirt Order
         </h2>
-        {message && <p className="mb-4 text-green-400">{message}</p>}
+        {message && (
+          <p className={`mb-4 ${message.includes('Error') || message.includes('invalid') ? 'text-red-400' : 'text-green-400'}`}>
+            {message}
+          </p>
+        )}
 
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit}>
           <div className="flex gap-8">
             {/* LEFT COLUMN - INPUT FIELDS */}
             <div className="flex-1 space-y-4">
@@ -233,22 +279,24 @@ export default function PreOrder({ onClose }) {
                 required
               />
               <input
-                type="text"
+                type="tel"
                 name="telephone"
-                placeholder="Telephone"
+                placeholder="Telephone (10 digits)"
                 value={formData.telephone}
                 onChange={handleChange}
                 className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
                 pattern="[0-9]{10}"
+                title="Please enter exactly 10 digits"
                 required
               />
               <input
-                type="text"
+                type="number"
                 name="quantity"
-                placeholder="Quantity"
+                placeholder="Total Quantity"
                 value={formData.quantity}
                 onChange={handleChange}
                 className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
+                min="1"
                 required
               />
 
@@ -283,7 +331,7 @@ export default function PreOrder({ onClose }) {
               </select>
 
               <div>
-                <h4 className="font-medium">Quantities</h4>
+                <h4 className="font-medium">Size Quantities</h4>
                 {sizes.map((size) => (
                   <div
                     key={size._id}
@@ -325,17 +373,20 @@ export default function PreOrder({ onClose }) {
               {renderCheckboxGroup("Sleeve", "sleeve", multiOptions.sleeve)}
 
               <div>
+                <h4 className="font-medium">Button Count</h4>
                 <input
-                  type="text"
+                  type="number"
                   name="buttonCount"
                   value={formData.buttons.count}
                   onChange={handleChange}
                   className="w-full bg-white text-black border border-gray-600 rounded px-3 py-2"
-                  placeholder="Enter number of buttons"
+                  placeholder="Number of buttons"
+                  min="0"
                 />
               </div>
 
               <div>
+                <h4 className="font-medium">Button Colour</h4>
                 <select
                   name="buttonColour"
                   value={formData.buttons.colour}
