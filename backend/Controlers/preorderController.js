@@ -57,36 +57,93 @@ const createPreorder = async (req, res) => {
 
 const createPreorder = async (req, res) => {
   try {
-    console.log("Received request body:", JSON.stringify(req.body, null, 2));
-    console.log("Request headers:", req.headers);
+    console.log("=== ORDER REQUEST DEBUG ===");
+    console.log("Headers:", JSON.stringify(req.headers, null, 2));
+    console.log("Body keys:", Object.keys(req.body));
+    console.log("Environment:", process.env.NODE_ENV);
+    
+    // Extract and validate token
+    const authHeader = req.headers.authorization;
+    console.log("Auth header:", authHeader ? authHeader.substring(0, 20) + "..." : "Missing");
+    
+    if (!authHeader) {
+      console.log("No authorization header provided");
+      return res.status(401).json({
+        success: false,
+        message: "No authorization header provided"
+      });
+    }
 
-    // Validate token
-    const token = req.headers.authorization?.split(" ")[1];
+    if (!authHeader.startsWith('Bearer ')) {
+      console.log("Invalid authorization header format");
+      return res.status(401).json({
+        success: false,
+        message: "Invalid authorization header format"
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+    console.log("Token extracted, length:", token ? token.length : 0);
+    
     if (!token) {
+      console.log("No token in authorization header");
       return res.status(401).json({
         success: false,
         message: "No token provided"
       });
     }
 
+    // Verify JWT token
     let decoded;
     try {
+      console.log("Attempting to verify token...");
+      console.log("Secret key exists:", !!secretKey);
+      console.log("Secret key length:", secretKey ? secretKey.length : 0);
+      
       decoded = jwt.verify(token, secretKey);
-    } catch (jwtError) {
-      console.error("JWT verification failed:", jwtError);
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token"
+      console.log("Token verified successfully");
+      console.log("Decoded payload:", {
+        email: decoded.email,
+        exp: new Date(decoded.exp * 1000),
+        iat: new Date(decoded.iat * 1000)
       });
+    } catch (jwtError) {
+      console.error("JWT verification failed:", {
+        name: jwtError.name,
+        message: jwtError.message,
+        expiredAt: jwtError.expiredAt
+      });
+      
+      if (jwtError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          success: false,
+          message: "Token has expired"
+        });
+      } else if (jwtError.name === 'JsonWebTokenError') {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid token format"
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: "Token verification failed"
+        });
+      }
     }
 
     const userEmail = decoded.email;
+    console.log("User email from token:", userEmail);
 
     // Validate required fields
-    if (!req.body.customerName || !req.body.address || !req.body.telephone) {
+    const requiredFields = ['customerName', 'address', 'telephone'];
+    const missingFields = requiredFields.filter(field => !req.body[field] || req.body[field].trim() === '');
+    
+    if (missingFields.length > 0) {
+      console.log("Missing required fields:", missingFields);
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: customerName, address, or telephone"
+        message: `Missing required fields: ${missingFields.join(', ')}`
       });
     }
 
@@ -94,25 +151,40 @@ const createPreorder = async (req, res) => {
     let quantitiesArray = [];
     if (req.body.quantities) {
       if (Array.isArray(req.body.quantities)) {
+        console.log("Processing quantities array, length:", req.body.quantities.length);
         quantitiesArray = req.body.quantities
           .map((q) => {
-            if (!q || typeof q !== 'object') return null;
+            if (!q || typeof q !== 'object') {
+              console.warn("Invalid quantity object:", q);
+              return null;
+            }
             return {
               size: String(q.size || '').trim(),
               count: parseInt(q.count) || 0,
             };
           })
-          .filter(q => q && q.size && q.count > 0); // Only include valid entries
+          .filter(q => {
+            const isValid = q && q.size && q.count > 0;
+            if (!isValid) {
+              console.warn("Filtered out invalid quantity:", q);
+            }
+            return isValid;
+          });
+        console.log("Processed quantities:", quantitiesArray.length, "valid entries");
       } else {
-        console.warn("quantities is not an array:", typeof req.body.quantities);
+        console.warn("quantities is not an array:", typeof req.body.quantities, req.body.quantities);
       }
     }
 
     // Validate and sanitize array fields
-    const sanitizeArray = (field, defaultValue = []) => {
+    const sanitizeArray = (field, fieldName, defaultValue = []) => {
       if (!field) return defaultValue;
       if (Array.isArray(field)) return field;
-      if (typeof field === 'string') return [field]; // Handle single string
+      if (typeof field === 'string') {
+        console.log(`Converting string to array for ${fieldName}:`, field);
+        return [field];
+      }
+      console.warn(`Invalid array field ${fieldName}:`, typeof field);
       return defaultValue;
     };
 
@@ -127,50 +199,63 @@ const createPreorder = async (req, res) => {
         material: String(req.body.material || '').trim(),
         printingType: String(req.body.printingType || '').trim(),
         quantities: quantitiesArray,
-        collars: sanitizeArray(req.body.collars),
-        piping: sanitizeArray(req.body.piping),
-        finishing: sanitizeArray(req.body.finishing),
-        label: sanitizeArray(req.body.label),
+        collars: sanitizeArray(req.body.collars, 'collars'),
+        piping: sanitizeArray(req.body.piping, 'piping'),
+        finishing: sanitizeArray(req.body.finishing, 'finishing'),
+        label: sanitizeArray(req.body.label, 'label'),
         buttons: {
           count: String((req.body.buttons?.count || '')).trim(),
           colour: String((req.body.buttons?.colour || '')).trim(),
         },
-        outlines: sanitizeArray(req.body.outlines),
-        sleeve: sanitizeArray(req.body.sleeve),
+        outlines: sanitizeArray(req.body.outlines, 'outlines'),
+        sleeve: sanitizeArray(req.body.sleeve, 'sleeve'),
       },
     };
 
-    console.log("Sanitized preorder data:", JSON.stringify(preorderData, null, 2));
+    console.log("Final preorder data structure:");
+    console.log("- userEmail:", preorderData.userEmail);
+    console.log("- customerName:", preorderData.customerName);
+    console.log("- quantities count:", preorderData.tshirtDetails.quantities.length);
+    console.log("- arrays:", {
+      collars: preorderData.tshirtDetails.collars.length,
+      piping: preorderData.tshirtDetails.piping.length,
+      finishing: preorderData.tshirtDetails.finishing.length,
+      label: preorderData.tshirtDetails.label.length,
+      outlines: preorderData.tshirtDetails.outlines.length,
+      sleeve: preorderData.tshirtDetails.sleeve.length,
+    });
 
-    // Validate that we have the essential data
-    if (!preorderData.customerName || !preorderData.address || !preorderData.telephone) {
-      return res.status(400).json({
-        success: false,
-        message: "Customer name, address, and telephone are required"
-      });
-    }
-
+    console.log("Attempting to save preorder...");
     const preorder = new Preorder(preorderData);
     const savedPreorder = await preorder.save();
 
-    console.log("Order saved successfully:", savedPreorder._id);
+    console.log("Order saved successfully with ID:", savedPreorder._id);
+    console.log("===============================");
 
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
-      data: savedPreorder,
+      data: {
+        id: savedPreorder._id,
+        customerName: savedPreorder.customerName,
+        createdAt: savedPreorder.createdAt
+      },
     });
 
   } catch (error) {
-    console.error("Detailed error:", {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
-    });
+    console.error("=== ORDER ERROR ===");
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
 
     // Handle Mongoose validation errors
     if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
+      const validationErrors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message,
+        value: err.value
+      }));
+      console.error("Validation errors:", validationErrors);
       return res.status(400).json({
         success: false,
         message: "Validation failed",
@@ -180,15 +265,28 @@ const createPreorder = async (req, res) => {
 
     // Handle duplicate key errors
     if (error.code === 11000) {
+      console.error("Duplicate key error:", error.keyValue);
       return res.status(400).json({
         success: false,
         message: "Duplicate entry detected"
       });
     }
 
+    // Handle cast errors (invalid ObjectId, etc.)
+    if (error.name === 'CastError') {
+      console.error("Cast error:", error.path, error.value);
+      return res.status(400).json({
+        success: false,
+        message: "Invalid data format"
+      });
+    }
+
+    console.error("===================");
+
     res.status(500).json({
       success: false,
-      message: "Internal server error: " + error.message,
+      message: "Internal server error",
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
     });
   }
 };
