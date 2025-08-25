@@ -85,6 +85,7 @@ const handlePaymentReturn = async (req, res) => {
 };
 
 // ✅ Cancel URL
+// This handles when customer cancels the payment
 const handlePaymentCancel = async (req, res) => {
   if (req.method === "GET") {
     const { order_id } = req.query;
