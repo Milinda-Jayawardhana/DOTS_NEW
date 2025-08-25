@@ -30,7 +30,7 @@ exports.getStatById = async (req, res) => {
 // Add a new stat
 exports.addStat = async (req, res) => {
   try {
-    const { num, mark, text } = req.body;
+    const { num, mark, text } = req.body; 
     const newStat = new Stat({ num, mark, text });
     await newStat.save();
     res.status(201).json({ message: "Stat added successfully", stat: newStat });
