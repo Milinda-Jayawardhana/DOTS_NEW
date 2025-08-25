@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaWhatsapp } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -22,9 +22,12 @@ export default function Footer() {
          <div className=" h-[1px] bg-gray-600 w-full "></div>
          </div>
         <div className=" flex gap-[5px] ">
-          <FaFacebook></FaFacebook>
-          <FaInstagram></FaInstagram>
-          <FaTwitter></FaTwitter>
+          <a href="https://www.facebook.com/share/1FGkZx9XNY/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
+            <FaFacebook />
+          </a>
+          <a href="https://wa.me/94705966400" target="_blank" rel="noopener noreferrer" className="hover:text-green-400">
+            <FaWhatsapp />
+          </a>
         </div>
         <div className=" h-[1px] bg-gray-600 w-[30%]"></div>
         
@@ -35,8 +38,8 @@ export default function Footer() {
       <div className=" flex justify-center items-center mt-8 px-8 text-sm lg:gap-[100px] md:gap-[70px] sm:gap-[40px]">
         <div className=" hidden sm:flex gap-3 lg:gap-7 md:gap-5 sm:gap-3 xl:gap-10 w-[40%] justify-end">
           <a href="#" className="hover:text-gray-400"> About Us   </a>
-          <a href="#" className="hover:text-gray-400"> Contact   </a>
-          <a href="#" className="hover:text-gray-400"> Shop   </a>
+          <a href="/contact" className="hover:text-gray-400"> Contact   </a>
+          <a href="/shop" className="hover:text-gray-400"> Shop   </a>
           <a href="#" className="hover:text-gray-400"> Helps   </a>
 
         </div>
@@ -44,8 +47,8 @@ export default function Footer() {
           <h2 className="text-2xl font-bold">DOTS</h2>
           <div className="flex gap-5 sm:hidden">
             <a href="#" className="hover:text-gray-400"> About Us   </a>
-            <a href="#" className="hover:text-gray-400"> Contact   </a>
-            <a href="#" className="hover:text-gray-400"> Shop   </a>
+            <a href="/contact" className="hover:text-gray-400"> Contact   </a>
+            <a href="/shop" className="hover:text-gray-400"> Shop   </a>
             <a href="#" className="hover:text-gray-400"> Helps   </a>
             
           </div>

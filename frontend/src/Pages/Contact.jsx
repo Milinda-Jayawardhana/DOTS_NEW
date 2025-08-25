@@ -22,7 +22,7 @@ export default function Contact() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/contact-info")
+    fetch(`${import.meta.env.VITE_API_URL}/api/contact-info`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setContactInfo(data.data);
@@ -78,7 +78,7 @@ export default function Contact() {
     setStatus("");
 
     try {
-      const res = await fetch("http://localhost:3000/api/contacts", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contacts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export default function Contact() {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     // Add admin token if needed
-    const res = await fetch("http://localhost:3000/api/contact-info", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact-info`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editData),

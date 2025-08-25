@@ -16,6 +16,7 @@ const ttypeRoute = require("./Route/Ttype");
 const makeOrderRoute = require("./Route/preorderRoute");
 const statsRoute = require("./Route/Stats");
 const contactInfoRoute = require("./Route/ContactInfo");
+const paymentRoutes = require("./Route/Payments");
 //const productRoute = require("./Routes/productRoute");
 
 
@@ -41,7 +42,7 @@ app.use("/api", ttypeRoute); // color-related routes
 app.use("/api", makeOrderRoute); // color-related routes
 app.use("/api", statsRoute); // type-related routes
 app.use("/api", contactInfoRoute); // contact info routes
-
+app.use('/api/payment', paymentRoutes);
 //app.use("/product", productRoute);
 
 // Initialize admin account

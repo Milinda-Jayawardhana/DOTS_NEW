@@ -4,7 +4,6 @@ import App from './App.jsx';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Shop from './Pages/Shop.jsx';
-import Blogs from './Pages/Blogs.jsx';
 import Contact from './Pages/Contact.jsx';
 import Home from './Pages/Home.jsx';
 import Register from './Pages/Register.jsx';
@@ -13,6 +12,9 @@ import Admin from './Pages/Admin.jsx';
 import AdminAddItems from './Pages/AdminAddItems.jsx';
 import AdminOrders from './Pages/AdminOrders.jsx'; // Import AdminOrders if needed
 import AdminComments from './Pages/AdminComments.jsx';
+import PaymentSuccess from './Components/Payment-Success.jsx';
+import PaymentFailed from './Components/Payment-failed.jsx';
+import PaymentCancelled from './Components/Payment-Cancelled.jsx';
 
 
 
@@ -25,7 +27,6 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/shop', element: <Shop /> },
-      { path: '/blogs', element: <Blogs /> },
       { path: '/contact', element: <Contact /> },
       { path: '/register', element: <Register /> },
       { path: '/login', element: <Login /> },
@@ -33,6 +34,9 @@ const router = createBrowserRouter([
       { path: '/admin/add-items', element: <AdminAddItems /> },
       { path: '/admin/orders', element: <AdminOrders /> },
       { path: '/admin/comments', element: <AdminComments /> },
+      { path: '/payment-success', element: <PaymentSuccess /> },
+      { path: '/payment-failed', element: <PaymentFailed /> },
+      { path: '/payment-canceled', element: <PaymentCancelled /> },
 
     ],
   }
