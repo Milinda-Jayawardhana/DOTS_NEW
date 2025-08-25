@@ -37,6 +37,7 @@ exports.addStat = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Failed to add stat", error });
   }
+  
 };
 
 // Update a stat
