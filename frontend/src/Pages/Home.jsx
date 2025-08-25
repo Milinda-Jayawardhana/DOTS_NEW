@@ -5,7 +5,6 @@ import Stats from "../Components/Stats";
 import { AnimatedCard } from "../Ui/AnimatedCards/AnimatedCard";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
-import ProductShowcase from "../Components/ProductShowcase";
 import { DraggableCardDemo } from "../Ui/DraggedCards/DraggableCardDemo";
 
 export default function Home() {

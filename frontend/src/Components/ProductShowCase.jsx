@@ -9,7 +9,7 @@ const products = [
   { img: "/t2.jpeg", name: "Urban Style" },
 ];
 
-export default function ProductShowcase() {
+export default function ProductShowCase() {
   return (
     <div className="w-full py-10 flex flex-col items-center">
       <h2 className="text-2xl font-bold text-white mb-6">Pre-Created Projects</h2>
