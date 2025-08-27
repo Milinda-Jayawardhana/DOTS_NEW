@@ -9,7 +9,7 @@ exports.getAllColors = async (req, res) => {
     }
     return res.status(200).json({ colors });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -23,7 +23,7 @@ exports.getColorById = async (req, res) => {
     }
     return res.status(200).json({ color });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateColor = async (req, res) => {
     }
     return res.status(200).json({ message: "Color updated successfully", color: updatedColor });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
