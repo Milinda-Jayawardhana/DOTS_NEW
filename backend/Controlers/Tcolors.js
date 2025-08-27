@@ -62,8 +62,8 @@ exports.deleteColor = async (req, res) => {
     if (!deletedColor) {
       return res.status(404).json({ message: "Color not found or already deleted" });
     }
-    return res.status(200).json({ message: "Color deleted successfully", color: deletedColor });
+    return res.status(200).json({ message: "Color removed successfully", color: deletedColor });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
