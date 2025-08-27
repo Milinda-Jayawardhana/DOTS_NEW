@@ -59,6 +59,15 @@ const tshirtDetailsSchema = new mongoose.Schema({
     type: [String],
     enum: ['Normal', 'Cuff', 'DB Hem'],
     default: []
+  },
+  images: {
+    type: [
+      {
+        url: { type: String },
+        public_id: { type: String }
+      }
+    ],
+    default: []
   }
 }, { _id: false });
 
