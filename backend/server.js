@@ -18,8 +18,8 @@ const statsRoute = require("./Route/Stats");
 const contactInfoRoute = require("./Route/ContactInfo");
 const paymentRoutes = require("./Route/Payments");
 //const productRoute = require("./Routes/productRoute");
-const imageRoutes = require("./Route/imageRoute.js");
-const connectCloudinary = require("./Configuration/cloudinary");
+
+
 
 const app = express();
 
@@ -27,7 +27,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Import routes
 
@@ -44,9 +43,7 @@ app.use("/api", makeOrderRoute); // color-related routes
 app.use("/api", statsRoute); // type-related routes
 app.use("/api", contactInfoRoute); // contact info routes
 app.use('/api/payment', paymentRoutes);
-app.use("/api/images", imageRoutes);
 //app.use("/product", productRoute);
-
 
 // Initialize admin account
 createAdminAccount();
@@ -62,5 +59,3 @@ mongoose
   .catch((error) => {
     console.log("Error:",error);
   });
-
-  connectCloudinary();
