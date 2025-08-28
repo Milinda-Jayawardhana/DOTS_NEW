@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const {
   createPreorder,
   getAllPreorders,
@@ -10,10 +11,15 @@ const {
   updateOrderStatus
 } = require('../Controlers/preorderController');
 
-
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  }
+});
 
 // 🔒 Create a preorder (user must be logged in)
-router.post('/order', createPreorder);
+router.post('/order', upload.single('bankSlip'), createPreorder);
 
 // 🔒 Get all preorders (admin use — optionally protect with role check)
 router.get('/order', getAllPreorders);

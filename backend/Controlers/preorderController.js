@@ -1,12 +1,23 @@
 const jwt = require("jsonwebtoken");
 const Preorder = require("../Model/preorderModel");
 const { secretKey } = require("../Configuration/jwtConfig");
+const { uploadFileToFirebase } = require('../utils/fileUpload');
+const multer = require('multer');
+
+// Configure multer for memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
 
 const createPreorder = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-    const decoded = jwt.verify(token, secretKey);
-    const userEmail = decoded.email;
+    let bankSlipUrl = null;
+    if (req.file) {
+      bankSlipUrl = await uploadFileToFirebase(req.file, 'bankSlips');
+    }
 
     // Parse and sanitize quantities array
     const quantitiesArray = Array.isArray(req.body.quantities)
@@ -37,6 +48,13 @@ const createPreorder = async (req, res) => {
         outlines: req.body.outlines || [],
         sleeve: req.body.sleeve || [],
       },
+      paymentDetails: {
+        amount: parseFloat(req.body.amount),
+        bankSlip: {
+          url: bankSlipUrl,
+          uploadDate: new Date()
+        }
+      }
     };
 
     const preorder = new Preorder(preorderData);
