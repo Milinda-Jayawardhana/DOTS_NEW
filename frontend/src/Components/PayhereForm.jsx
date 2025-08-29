@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import md5 from "crypto-js/md5";
+import axios from "axios";
 
 export default function PayHereForm({
   amount,
@@ -16,12 +17,52 @@ export default function PayHereForm({
       script.src = "https://www.payhere.lk/lib/payhere.js";
       script.async = true;
       document.body.appendChild(script);
+      script.onload = () => {
+        attachHandlers();
+      };
+    } else {
+      attachHandlers();
     }
 
-    if (window.payhere) {
-      window.payhere.onCompleted = function (orderId) {
-        onPaymentSuccess && onPaymentSuccess(orderId);
+    function attachHandlers() {
+      // PayHere will call onCompleted(payload) with order id in sandbox; adapt below
+      window.payhere.onCompleted = async function (returned) {
+        // returned may be an orderId string or an object depending on SDK usage
+        const returnedPayload = returned || {};
+        const txnId = (returnedPayload?.payment_id || returnedPayload || "").toString();
+
+        const paymentInfo = {
+          provider: "payhere",
+          transactionId: txnId,
+          amount: Number(amount) || 0,
+          paidAt: new Date().toISOString(),
+          raw: returnedPayload || null,
+        };
+
+        try {
+          // notify backend to mark advanced payment
+          const apiBase = import.meta.env.VITE_API_URL || window.location.origin;
+          const token = localStorage.getItem("token");
+          const url = `${apiBase.replace(/\/$/, "")}/api/order/${orderId}/advanced`;
+
+          await axios.put(
+            url,
+            { paymentInfo },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          onPaymentSuccess && onPaymentSuccess(paymentInfo);
+        } catch (err) {
+          console.error("Failed to notify backend about advanced payment:", err?.response?.data || err.message);
+          onError && onError(err);
+        }
       };
+
       window.payhere.onDismissed = function () {
         console.log("Payment dismissed");
       };
@@ -38,7 +79,7 @@ export default function PayHereForm({
         window.payhere.onError = null;
       }
     };
-  }, [onPaymentSuccess, onError]);
+  }, [amount, name, contact, orderId, onPaymentSuccess, onError]);
 
   // ✅ Sandbox hash generator (frontend only)
   const generateHash = () => {
@@ -65,7 +106,7 @@ export default function PayHereForm({
     const merchant_id = import.meta.env.VITE_PAYHERE_MERCHANT_ID || "1230061";
 
     const payment = {
-      sandbox: true, // ✅ keep this true
+      sandbox: true,
       merchant_id,
       return_url: `${import.meta.env.VITE_API_URL}/api/payment/return`,
       cancel_url: `${import.meta.env.VITE_API_URL}/api/payment/cancel`,
@@ -81,7 +122,7 @@ export default function PayHereForm({
       address: "No.1, Main Street",
       city: "Colombo",
       country: "Sri Lanka",
-      hash: generateHash(), // ✅ include hash
+      hash: generateHash(),
     };
 
     console.log("Payment object:", payment); // Debugging

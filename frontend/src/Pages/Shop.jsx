@@ -55,6 +55,17 @@ export default function Shop() {
     fetchUserOrders();
   }, []);
 
+    const handleAdvancedPaid = (orderIdOrObj, paymentInfo) => {
+    const idToMatch = orderIdOrObj?._id || orderIdOrObj?.orderId || orderIdOrObj;
+    setOrders((prev) =>
+      prev.map((o) =>
+        o._id === idToMatch || o.orderId === idToMatch
+          ? { ...o, advancedPayment: { paid: true, ...(paymentInfo || {}) } }
+          : o
+      )
+    );
+  };
+
   const handlePopupOpen = (popupNumber) => {
     setPopup(popupNumber);
   };
