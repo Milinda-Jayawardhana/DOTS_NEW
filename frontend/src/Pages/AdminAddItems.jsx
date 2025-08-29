@@ -6,7 +6,10 @@ import AddMaterialForm from "../Components/AddMaterialForm";
 import AddCountForm from "../Components/AddCountForm";
 import AddTypeForm from "../Components/AddTypeForm";
 
+
 import AddStatForm from "../Components/AddStatForm";
+import AddGsmForm from "../Components/AddGsmForm";
+import AddCollarForm from "../Components/AddCollarForm";
 
 export default function AdminAddItems() {
   return (
@@ -24,6 +27,8 @@ export default function AdminAddItems() {
         </div>
         <div className="flex gap-10 p-10 justify-evenly">
           <AddSizeForm></AddSizeForm>
+          <AddGsmForm></AddGsmForm>
+          <AddCollarForm></AddCollarForm>
         </div>
 
         <div className=" w-full h-3 bg-gray-700 "></div>

@@ -15,7 +15,7 @@ export default function AddCollarForm() {
     const newCollar = { name: collarName, price: parseFloat(collarPrice) };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/collars`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/collar`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCollar),

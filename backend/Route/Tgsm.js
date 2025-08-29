@@ -1,17 +1,21 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const tcollar = require("../Controlers/Tgsm"); // make sure controller file name matches
 
-const gsmSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true, // Each GSM type has a unique name (e.g., "160 GSM")
-  },
-  price: {
-    type: Number,
-    required: true, // Price for using this fabric weight
-  },
-});
+const router = express.Router();
 
-const Gsm = mongoose.model("Gsm", gsmSchema);
+// Get all gsm
+router.get("/gsm", tcollar.getAllGsm);
 
-module.exports = Gsm;
+// Get gsm by ID
+router.get("/gsm/:id", tcollar.getGsmById);
+
+// Add a new gsm
+router.post("/gsm", tcollar.addGsm);
+
+// Update a gsm
+router.put("/gsm/:id", tcollar.updateGsm);
+
+// Delete a gsm
+router.delete("/gsm/:id", tcollar.deleteGsm);
+
+module.exports = router;
