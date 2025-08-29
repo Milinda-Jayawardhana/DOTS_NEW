@@ -11,6 +11,8 @@ export function DraggableCardDemo() {
     { logo: "/kalaniya.jfif" },
     { logo: "/ruhu.jfif" },
     { logo: "/raja.png" },
+    { logo: "/colo.png" },
+    { logo: "/vav.jfif" },
     // add more logos here if needed
   ];
 
@@ -19,7 +21,7 @@ export function DraggableCardDemo() {
     { image: "/Tshirt2.jpg" },
   ];
 
-  const generatedItems = Array.from({ length: 26 }, (_, i) => ({
+  const generatedItems = Array.from({ length: 31 }, (_, i) => ({
     image: `/t${i + 1}.jpeg`,
   }));
 
