@@ -19,7 +19,7 @@ exports.getColorById = async (req, res) => {
   try {
     const color = await Color.findById(id);
     if (!color) {
-      return res.status(404).json({ message: "Color not found" });
+      return res.status(404).json({ message: "Color is not found" });
     }
     return res.status(200).json({ color });
   } catch (err) {

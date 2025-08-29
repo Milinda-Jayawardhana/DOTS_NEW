@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const Preorder = require("../Model/preorderModel"); // your order model
 
 // 🔐 Utility: Validate md5sig
+// This ensures the payment notification is legitimate and came from PayHere
 const validatePayHereSignature = (paymentData, merchantSecret) => {
   const {
     merchant_id,
@@ -26,6 +27,7 @@ const validatePayHereSignature = (paymentData, merchantSecret) => {
 };
 
 // ✅ Notify URL (PayHere Server → Your Server)
+// This is called by PayHere's server to confirm payment status
 const handlePaymentNotify = async (req, res) => {
   try {
     const paymentData = req.body;
@@ -83,6 +85,7 @@ const handlePaymentReturn = async (req, res) => {
 };
 
 // ✅ Cancel URL
+// This handles when customer cancels the payment
 const handlePaymentCancel = async (req, res) => {
   if (req.method === "GET") {
     const { order_id } = req.query;

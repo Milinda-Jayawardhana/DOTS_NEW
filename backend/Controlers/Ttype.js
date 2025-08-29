@@ -9,7 +9,7 @@ exports.getAllTypes = async (req, res) => {
     }
     return res.status(200).json({ types });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -23,7 +23,7 @@ exports.getTypeById = async (req, res) => {
     }
     return res.status(200).json({ type });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateType = async (req, res) => {
     }
     return res.status(200).json({ message: "Type updated successfully", type: updatedType });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
@@ -62,8 +62,8 @@ exports.deleteType = async (req, res) => {
     if (!deletedType) {
       return res.status(404).json({ message: "Type not found or already deleted" });
     }
-    return res.status(200).json({ message: "Type deleted successfully", type: deletedType });
+    return res.status(200).json({ message: "Type removed successfully", type: deletedType });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };

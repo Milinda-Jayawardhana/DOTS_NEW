@@ -72,6 +72,38 @@ const getAllPreorders = async (req, res) => {
   }
 };
 
+// ...existing code...
+const setAdvancedPayment = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ success: false, message: "Authentication token missing" });
+    try { jwt.verify(token, secretKey); } catch (err) { return res.status(401).json({ success: false, message: "invalid signature" }); }
+
+    const { id } = req.params;
+    const paymentInfo = req.body.paymentInfo || {};
+
+    // find by _id or orderId
+    let order = await Preorder.findById(id);
+    if (!order) order = await Preorder.findOne({ orderId: id });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    order.advancedPayment = {
+      paid: true,
+      amount: Number(paymentInfo.amount || 0),
+      provider: paymentInfo.provider || "",
+      transactionId: paymentInfo.transactionId || "",
+      paidAt: paymentInfo.paidAt ? new Date(paymentInfo.paidAt) : new Date(),
+      raw: paymentInfo.raw || null,
+    };
+
+    await order.save();
+    return res.status(200).json({ success: true, message: "Advanced payment recorded", data: order });
+  } catch (err) {
+    console.error("setAdvancedPayment error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Failed to update advanced payment" });
+  }
+};
+
 // Get preorders for the logged-in user
 const getUserPreorders = async (req, res) => {
   try {
@@ -246,5 +278,6 @@ module.exports = {
   getUserPreorders,
   updatePreorder,
   deletePreorder,
-  updateOrderStatus
+  updateOrderStatus,
+  setAdvancedPayment
 };

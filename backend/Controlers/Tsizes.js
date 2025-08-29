@@ -9,7 +9,7 @@ exports.getAllSizes = async (req, res) => {
     }
     return res.status(200).json({ sizes });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -23,7 +23,7 @@ exports.getSizeById = async (req, res) => {
     }
     return res.status(200).json({ size });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateSize = async (req, res) => {
     }
     return res.status(200).json({ message: "Size updated successfully", size: updatedSize });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
@@ -64,6 +64,6 @@ exports.deleteSize = async (req, res) => {
     }
     return res.status(200).json({ message: "Size deleted successfully", size: deletedSize });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
