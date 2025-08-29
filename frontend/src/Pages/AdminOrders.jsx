@@ -40,11 +40,14 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/order`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/order`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.data.success) {
           setOrders(response.data.data);
@@ -102,28 +105,47 @@ export default function AdminOrders() {
               </div>
 
               {/* Dropdown for order status */}
-              <div className="flex items-center gap-2 text-white">
-                <label
-                  htmlFor={`status-${order._id}`}
-                  className="text-sm font-medium"
-                >
-                  Status:
-                </label>
-                <select
-                  id={`status-${order._id}`}
-                  className="px-2 py-1 rounded text-black"
-                  defaultValue={order.orderStatus || "Pending"}
-                  onChange={(e) =>
-                    handleStatusChange(order._id, e.target.value)
-                  }
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Confirmed">Confirmed</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Ready">Ready</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
+              <div className="flex-col items-center gap-2 text-white">
+                <div className="flex items-center gap-2">
+                  <label
+                    htmlFor={`status-${order._id}`}
+                    className="text-sm font-medium"
+                  >
+                    Status:
+                  </label>
+                  <select
+                    id={`status-${order._id}`}
+                    className="px-2 py-1 rounded text-black"
+                    defaultValue={order.orderStatus || "Pending"}
+                    onChange={(e) =>
+                      handleStatusChange(order._id, e.target.value)
+                    }
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Ready">Ready</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                {(order.orderStatus === "Confirmed" ||
+                  order.orderStatus === "Processing" ||
+                  order.orderStatus === "Ready" ||
+                  order.orderStatus === "Delivered") && (
+                  <p
+                    className={`mt-2 font-semibold ${
+                      order.advancedPayment?.paid
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {order.advancedPayment?.paid
+                      ? "✅ Advanced payment done"
+                      : "❌ Advanced payment pending"}
+                  </p>
+                )}
               </div>
             </div>
           ))}
