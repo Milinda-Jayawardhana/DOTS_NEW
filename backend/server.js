@@ -17,6 +17,8 @@ const makeOrderRoute = require("./Route/preorderRoute");
 const statsRoute = require("./Route/Stats");
 const contactInfoRoute = require("./Route/ContactInfo");
 const paymentRoutes = require("./Route/Payments");
+const tcollarRoute = require("./Route/Tcollars");
+const tgsmRoute = require("./Route/Tgsm");
 //const productRoute = require("./Routes/productRoute");
 
 
@@ -43,6 +45,8 @@ app.use("/api", makeOrderRoute); // color-related routes
 app.use("/api", statsRoute); // type-related routes
 app.use("/api", contactInfoRoute); // contact info routes
 app.use('/api/payment', paymentRoutes);
+app.use("/api", tcollarRoute); // collar-related routes
+app.use("/api", tgsmRoute); // gsm-related routes
 //app.use("/product", productRoute);
 
 // Initialize admin account
