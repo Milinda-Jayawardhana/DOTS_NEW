@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import md5 from "crypto-js/md5";
-import axios from "axios";
 
 export default function PayHereForm({
   amount,
@@ -10,10 +9,8 @@ export default function PayHereForm({
   onPaymentSuccess,
   onError,
 }) {
-  const token = localStorage.getItem("token"); // ✅ moved here
-
+  // Load PayHere script
   useEffect(() => {
-    // Load PayHere script dynamically
     if (!window.payhere) {
       const script = document.createElement("script");
       script.src = "https://www.payhere.lk/lib/payhere.js";
@@ -43,24 +40,23 @@ export default function PayHereForm({
     };
   }, [onPaymentSuccess, onError]);
 
+  // Generate sandbox hash (frontend only)
   const generateHash = () => {
     const merchant_id = import.meta.env.VITE_PAYHERE_MERCHANT_ID || "1230061";
-    const merchant_secret = import.meta.env.VITE_PAYHERE_MERCHANT_SECRET; // 🔹 for sandbox only
+    const merchant_secret = import.meta.env.VITE_PAYHERE_MERCHANT_SECRET;
     const currency = "LKR";
 
     const formattedAmount = parseFloat(amount)
       .toLocaleString("en-US", { minimumFractionDigits: 2 })
-      .replaceAll(",", ""); // e.g. "100.00"
+      .replaceAll(",", "");
 
     const hashedSecret = md5(merchant_secret).toString().toUpperCase();
-    const raw =
-      merchant_id + orderId + formattedAmount + currency + hashedSecret;
+    const raw = merchant_id + orderId + formattedAmount + currency + hashedSecret;
 
     return md5(raw).toString().toUpperCase();
   };
 
-  // ✅ make async so we can await axios
-  const handlePayNow = async () => {
+  const handlePayNow = () => {
     if (!window.payhere) {
       alert("Payment gateway not loaded yet. Please wait.");
       return;
@@ -69,7 +65,7 @@ export default function PayHereForm({
     const merchant_id = import.meta.env.VITE_PAYHERE_MERCHANT_ID || "1230061";
 
     const payment = {
-      sandbox: true, // ✅ keep this true
+      sandbox: true,
       merchant_id,
       return_url: `${import.meta.env.VITE_API_URL}/api/payment/return`,
       cancel_url: `${import.meta.env.VITE_API_URL}/api/payment/cancel`,
@@ -85,39 +81,35 @@ export default function PayHereForm({
       address: "No.1, Main Street",
       city: "Colombo",
       country: "Sri Lanka",
-      hash: generateHash(), // ✅ include hash
+      hash: generateHash(),
     };
 
-    console.log("Payment object:", payment); // Debugging
+    console.log("Payment object:", payment);
     window.payhere.startPayment(payment);
-
-    try {
-      // Prepare dummy advanced payment info
-      const paymentInfo = {
-        amount: parseFloat(amount),
-        provider: "PayHere",
-        transactionId: "ADV-" + new Date().getTime(), // dummy ID
-        paidAt: new Date(),
-        raw: null,
-      };
-
-      // Send PUT request to update advanced payment
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/order/${orderId}/advanced`,
-        { paymentInfo },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } catch (err) {
-      console.error("Failed to update advanced payment:", err);
-    }
   };
 
   return (
-    <button
-      onClick={handlePayNow}
-      className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 mt-2"
-    >
-      Pay Advance (Rs {amount})
-    </button>
+    <div className="flex flex-col gap-2">
+      {/* Real PayHere Payment */}
+      <button
+        onClick={handlePayNow}
+        className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+      >
+        Pay Advance (Rs {amount})
+      </button>
+
+      {/* Local test button */}
+      {import.meta.env.DEV && (
+        <button
+          onClick={() => {
+            console.log("Simulating payment success for testing...");
+            onPaymentSuccess && onPaymentSuccess(orderId);
+          }}
+          className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+        >
+          Test Payment Success (Local)
+        </button>
+      )}
+    </div>
   );
 }
