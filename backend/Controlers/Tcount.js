@@ -9,7 +9,7 @@ exports.getAllTShirtCounts = async (req, res) => {
     }
     return res.status(200).json({ tshirtCounts });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -23,7 +23,7 @@ exports.getTShirtCountById = async (req, res) => {
     }
     return res.status(200).json({ tshirtCount });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateTShirtCount = async (req, res) => {
     }
     return res.status(200).json({ message: "T-shirt count record updated successfully", tshirtCount: updatedTShirtCount });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
@@ -64,6 +64,6 @@ exports.deleteTShirtCount = async (req, res) => {
     }
     return res.status(200).json({ message: "T-shirt count record deleted successfully", tshirtCount: deletedTShirtCount });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };

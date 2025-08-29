@@ -9,7 +9,7 @@ exports.getAllColors = async (req, res) => {
     }
     return res.status(200).json({ colors });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -19,11 +19,11 @@ exports.getColorById = async (req, res) => {
   try {
     const color = await Color.findById(id);
     if (!color) {
-      return res.status(404).json({ message: "Color not found" });
+      return res.status(404).json({ message: "Color is not found" });
     }
     return res.status(200).json({ color });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateColor = async (req, res) => {
     }
     return res.status(200).json({ message: "Color updated successfully", color: updatedColor });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
@@ -62,8 +62,8 @@ exports.deleteColor = async (req, res) => {
     if (!deletedColor) {
       return res.status(404).json({ message: "Color not found or already deleted" });
     }
-    return res.status(200).json({ message: "Color deleted successfully", color: deletedColor });
+    return res.status(200).json({ message: "Color removed successfully", color: deletedColor });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };

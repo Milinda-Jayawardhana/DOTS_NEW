@@ -9,7 +9,7 @@ exports.getAllMaterials = async (req, res) => {
     }
     return res.status(200).json({ materials });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -23,7 +23,7 @@ exports.getMaterialById = async (req, res) => {
     }
     return res.status(200).json({ material });
   } catch (err) {
-    return res.status(500).json({ message: "An error occurred", error: err });
+    return res.status(500).json({ message: "Unexpected error occurred", error: err });
   }
 };
 
@@ -50,7 +50,7 @@ exports.updateMaterial = async (req, res) => {
     }
     return res.status(200).json({ message: "Material updated successfully", material: updatedMaterial });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };
 
@@ -64,6 +64,6 @@ exports.deleteMaterial = async (req, res) => {
     }
     return res.status(200).json({ message: "Material deleted successfully", material: deletedMaterial });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred", error });
+    res.status(500).json({ message: "Unexpected error occurred", error });
   }
 };

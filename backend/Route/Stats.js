@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/stats", statController.getAllStats);
 router.get("/stats/:id", statController.getStatById);
 
-// Admin-protected routes
+// Admin_protected routes
 router.post(
   "/stats", authMiddleware.authenticateToken, authMiddleware.authorizeAdmin, statController.addStat
 );
