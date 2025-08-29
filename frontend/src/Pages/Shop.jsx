@@ -309,55 +309,68 @@ export default function Shop() {
                           {order.orderStatus}
                         </span>
                       </p>
-                      {order.orderStatus === "Confirmed" && (
-                        <PayHereForm
-                          amount={750 * (order.tshirtDetails?.quantity || 1)}
-                          name={order.customerName}
-                          contact={order.telephone}
-                          orderId={order.orderId || order._id}
-                          onPaymentSuccess={async () => {
-                            alert("✅ Payment successful!");
-                            try {
-                              const token = localStorage.getItem("token");
-                              await axios.put(
-                                `${import.meta.env.VITE_API_URL}/api/order/${
-                                  order._id
-                                }/advanced`,
-                                {
-                                  paymentInfo: {
-                                    amount:
-                                      750 *
-                                      (order.tshirtDetails?.quantity || 1),
-                                    provider: "PayHere",
-                                    transactionId: order.orderId || order._id, // fallback
+                      {order.orderStatus === "Confirmed" &&
+                        !order.advancedPayment?.paid && (
+                          <PayHereForm
+                            amount={750 * (order.tshirtDetails?.quantity || 1)}
+                            name={order.customerName}
+                            contact={order.telephone}
+                            orderId={order.orderId || order._id}
+                            onPaymentSuccess={async () => {
+                              alert("✅ Payment successful!");
+                              try {
+                                const token = localStorage.getItem("token");
+                                await axios.put(
+                                  `${import.meta.env.VITE_API_URL}/api/order/${
+                                    order._id
+                                  }/advanced`,
+                                  {
+                                    paymentInfo: {
+                                      amount:
+                                        750 *
+                                        (order.tshirtDetails?.quantity || 1),
+                                      provider: "PayHere",
+                                      transactionId: order.orderId || order._id, // fallback
+                                    },
                                   },
-                                },
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
+                                  {
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                  }
+                                );
 
-                              // 🔄 Refresh orders list
-                              const res = await axios.get(
-                                `${import.meta.env.VITE_API_URL}/api/my-orders`,
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
-                              setOrders(res.data.data);
-                            } catch (err) {
-                              console.error(
-                                "❌ Failed to update advanced payment:",
-                                err
-                              );
-                              alert(
-                                "Payment succeeded, but failed to update order update."
-                              );
-                            }
-                          }}
-                          onError={(msg) => alert("❌ Payment error: " + msg)}
-                        />
-                      )}
+                                // 🔄 Refresh orders list
+                                const res = await axios.get(
+                                  `${
+                                    import.meta.env.VITE_API_URL
+                                  }/api/my-orders`,
+                                  {
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                  }
+                                );
+                                setOrders(res.data.data);
+                              } catch (err) {
+                                console.error(
+                                  "❌ Failed to update advanced payment:",
+                                  err
+                                );
+                                alert(
+                                  "Payment succeeded, but failed to update order update."
+                                );
+                              }
+                            }}
+                            onError={(msg) => alert("❌ Payment error: " + msg)}
+                          />
+                        )}
+                      {(order.orderStatus === "Confirmed" || order.orderStatus === "Processing") &&
+                        order.advancedPayment?.paid && (
+                          <p className="text-yellow-300 font-semibold text-center text-[12px]">
+                            Advanced payment done. Order processing…
+                          </p>
+                        )}
                     </div>
                   </div>
                 ))}
