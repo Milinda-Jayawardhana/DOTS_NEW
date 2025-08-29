@@ -4,15 +4,20 @@ export function DraggableCardDemo() {
   // Only logos here (no names linked)
   const universityLogos = [
     { logo: "/pera.jfif" },
-    { logo: "/mora.jfif" },
-    { logo: "/japura.png" },
-    { logo: "/sabra.jfif" },
     { logo: "/jaffna.png" },
-    { logo: "/kalaniya.jfif" },
+    { logo: "/mora.jfif" },
+    { logo: "/sabra.jfif" },
+    { logo: "/japura.png" },
+    { logo: "/wayaba.jfif" },
     { logo: "/ruhu.jfif" },
-    { logo: "/raja.png" },
-    { logo: "/colo.png" },
     { logo: "/vav.jfif" },
+    { logo: "/colo.png" },
+    { logo: "/raja.png" },
+    { logo: "/open.jfif" },
+    { logo: "/kalaniya.jfif" },
+    { logo: "/ocean.png" },
+    { logo: "/jaff.png" },
+    
     // add more logos here if needed
   ];
 
