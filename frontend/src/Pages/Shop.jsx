@@ -315,7 +315,8 @@ export default function Shop() {
                           name={order.customerName}
                           contact={order.telephone}
                           orderId={order.orderId || order._id}
-                          onPaymentSuccess={async () => {
+                          onPaymentSuccess={async (payhereOrderId) => {
+                            // ✅ capture payhere orderId
                             alert("Payment successful!");
 
                             try {
@@ -330,17 +331,16 @@ export default function Shop() {
                                       750 *
                                       (order.tshirtDetails?.quantity || 1),
                                     provider: "PayHere",
-                                    transactionId: order.orderId, // You might receive txnId from payhere notify API later
+                                    transactionId: payhereOrderId, // ✅ use PayHere orderId, not your orderId
+                                    paidAt: new Date().toISOString(),
                                   },
                                 },
                                 {
-                                  headers: {
-                                    Authorization: `Bearer ${token}`,
-                                  },
+                                  headers: { Authorization: `Bearer ${token}` },
                                 }
                               );
 
-                              // ✅ Refresh orders list
+                              // refresh orders
                               const res = await axios.get(
                                 `${import.meta.env.VITE_API_URL}/api/my-orders`,
                                 {
