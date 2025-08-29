@@ -92,7 +92,15 @@ const preorderSchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Confirmed', 'Processing', 'Ready', 'Delivered', 'Cancelled'],
     default: 'Pending'
-  }
+  },
+  advancedPayment: {
+    paid: { type: Boolean, default: false },        // if advanced payment done
+    amount: { type: Number, default: 0 },           // paid amount
+    provider: { type: String, default: "" },        // e.g. "payhere"
+    transactionId: { type: String, default: "" },   // provider txn id
+    paidAt: { type: Date, default: null },          // timestamp
+    raw: { type: Object, default: null }            // optional full provider payload
+  },
 }, {
   timestamps: true
 });

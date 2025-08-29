@@ -7,7 +7,8 @@ const {
   getUserPreorders,
   updatePreorder,
   deletePreorder,
-  updateOrderStatus
+  updateOrderStatus,
+  setAdvancedPayment
 } = require('../Controlers/preorderController');
 
 
@@ -31,5 +32,7 @@ router.put('/order/:id/status', updateOrderStatus);
 
 // 🔒 Delete a specific preorder by its ID
 router.delete('/order/:id', deletePreorder);
+
+router.put("/order/:id/advanced", setAdvancedPayment);
 
 module.exports = router;

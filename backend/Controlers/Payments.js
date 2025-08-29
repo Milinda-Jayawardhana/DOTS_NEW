@@ -63,7 +63,7 @@ const handlePaymentNotify = async (req, res) => {
     }
   } catch (error) {
     console.error("Payment notify error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500).json( { message: "Internal server error." } );
   }
 };
 
