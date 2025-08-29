@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import md5 from "crypto-js/md5";
+import axios from "axios";
 
 export default function PayHereForm({
   amount,
@@ -9,6 +10,8 @@ export default function PayHereForm({
   onPaymentSuccess,
   onError,
 }) {
+  const token = localStorage.getItem("token"); // ✅ moved here
+
   useEffect(() => {
     // Load PayHere script dynamically
     if (!window.payhere) {
@@ -40,7 +43,6 @@ export default function PayHereForm({
     };
   }, [onPaymentSuccess, onError]);
 
-  // ✅ Sandbox hash generator (frontend only)
   const generateHash = () => {
     const merchant_id = import.meta.env.VITE_PAYHERE_MERCHANT_ID || "1230061";
     const merchant_secret = import.meta.env.VITE_PAYHERE_MERCHANT_SECRET; // 🔹 for sandbox only
@@ -51,12 +53,14 @@ export default function PayHereForm({
       .replaceAll(",", ""); // e.g. "100.00"
 
     const hashedSecret = md5(merchant_secret).toString().toUpperCase();
-    const raw = merchant_id + orderId + formattedAmount + currency + hashedSecret;
+    const raw =
+      merchant_id + orderId + formattedAmount + currency + hashedSecret;
 
     return md5(raw).toString().toUpperCase();
   };
 
-  const handlePayNow = () => {
+  // ✅ make async so we can await axios
+  const handlePayNow = async () => {
     if (!window.payhere) {
       alert("Payment gateway not loaded yet. Please wait.");
       return;
@@ -86,6 +90,26 @@ export default function PayHereForm({
 
     console.log("Payment object:", payment); // Debugging
     window.payhere.startPayment(payment);
+
+    try {
+      // Prepare dummy advanced payment info
+      const paymentInfo = {
+        amount: parseFloat(amount),
+        provider: "PayHere",
+        transactionId: "ADV-" + new Date().getTime(), // dummy ID
+        paidAt: new Date(),
+        raw: null,
+      };
+
+      // Send PUT request to update advanced payment
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/order/${orderId}/advanced`,
+        { paymentInfo },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Failed to update advanced payment:", err);
+    }
   };
 
   return (

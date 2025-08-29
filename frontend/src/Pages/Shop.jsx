@@ -315,48 +315,9 @@ export default function Shop() {
                           name={order.customerName}
                           contact={order.telephone}
                           orderId={order.orderId || order._id}
-                          onPaymentSuccess={async (payhereOrderId) => {
-                            // ✅ capture payhere orderId
+                          onPaymentSuccess={() => {
                             alert("Payment successful!");
-
-                            try {
-                              const token = localStorage.getItem("token");
-                              await axios.put(
-                                `${import.meta.env.VITE_API_URL}/api/order/${
-                                  order._id
-                                }/advanced`,
-                                {
-                                  paymentInfo: {
-                                    amount:
-                                      750 *
-                                      (order.tshirtDetails?.quantity || 1),
-                                    provider: "PayHere",
-                                    transactionId: payhereOrderId, // ✅ use PayHere orderId, not your orderId
-                                    paidAt: new Date().toISOString(),
-                                  },
-                                },
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
-
-                              // refresh orders
-                              const res = await axios.get(
-                                `${import.meta.env.VITE_API_URL}/api/my-orders`,
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
-                              setOrders(res.data.data);
-                            } catch (err) {
-                              console.error(
-                                "Failed to update advanced payment:",
-                                err
-                              );
-                              alert(
-                                "Payment succeeded, but failed to update order."
-                              );
-                            }
+                            // Optionally refresh orders or update status here
                           }}
                           onError={(msg) => alert(msg)}
                         />
@@ -567,9 +528,6 @@ export default function Shop() {
             )}
           </div>
         )}
-        {/*comment*/}
-        {/*comment test*/}
-        {/*comment test 2*/}
       </div>
       <Footer />
     </div>
