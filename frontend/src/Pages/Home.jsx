@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { FlipWordsDemo } from "../Ui/FlipWords/FlipWordsDemo";
 import { FiShoppingCart } from "react-icons/fi";
 import Stats from "../Components/Stats";
@@ -9,9 +9,19 @@ import { DraggableCardDemo } from "../Ui/DraggedCards/DraggableCardDemo";
 
 export default function Home() {
   const navigate = useNavigate();
+  const draggableRef = useRef(null);
 
   const handleClick = () => {
     navigate("/shop");
+  };
+
+  const scrollToDesigns = () => {
+    if (draggableRef.current) {
+      draggableRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (
@@ -129,8 +139,10 @@ export default function Home() {
             Product Showcase
           </h2>
         </div>
-        <DraggableCardDemo></DraggableCardDemo>
-        <Footer></Footer>
+        <div ref={draggableRef}>
+          <DraggableCardDemo />
+        </div>
+        <Footer scrollToDesigns={scrollToDesigns} />
       </div>
     </div>
   );

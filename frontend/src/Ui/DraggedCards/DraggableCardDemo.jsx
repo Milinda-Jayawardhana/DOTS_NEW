@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 
-export function DraggableCardDemo() {
-  // Only logos here (no names linked)
+export const DraggableCardDemo = forwardRef((props, ref) => {
   const universityLogos = [
     { logo: "/pera.jfif" },
     { logo: "/mora.jfif" },
@@ -13,7 +12,6 @@ export function DraggableCardDemo() {
     { logo: "/raja.png" },
     { logo: "/colo.png" },
     { logo: "/vav.jfif" },
-    // add more logos here if needed
   ];
 
   const manualItems = [
@@ -37,7 +35,7 @@ export function DraggableCardDemo() {
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-10">
+    <div ref={ref} className="w-full flex flex-col items-center py-10">
       <h2 className="text-3xl font-bold text-white/80 mb-6 text-center">
         DOTS Corporations. Product Gallery
       </h2>
@@ -82,7 +80,6 @@ export function DraggableCardDemo() {
           ))}
         </div>
 
-        {/* Separate Paragraph of University Names */}
         <div className="mt-2 max-w-6xl px-6 text-center">
           <p className="text-white/60 text-xs leading-relaxed">
             University of Peradeniya, University of Moratuwa, University of Sri
@@ -106,4 +103,4 @@ export function DraggableCardDemo() {
       </div>
     </div>
   );
-}
+});
