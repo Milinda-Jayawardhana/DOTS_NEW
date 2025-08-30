@@ -51,7 +51,8 @@ export default function PayHereForm({
       .replaceAll(",", "");
 
     const hashedSecret = md5(merchant_secret).toString().toUpperCase();
-    const raw = merchant_id + orderId + formattedAmount + currency + hashedSecret;
+    const raw =
+      merchant_id + orderId + formattedAmount + currency + hashedSecret;
 
     return md5(raw).toString().toUpperCase();
   };
@@ -89,11 +90,11 @@ export default function PayHereForm({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-row gap-2 items-center">
       {/* Real PayHere Payment */}
       <button
         onClick={handlePayNow}
-        className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+        className="bg-green-600 text-white text-[15px] px-6 py-2 rounded hover:bg-green-700 flex-1"
       >
         Pay Advance (Rs {amount})
       </button>
@@ -105,9 +106,9 @@ export default function PayHereForm({
             console.log("Simulating payment success for testing...");
             onPaymentSuccess && onPaymentSuccess(orderId);
           }}
-          className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 w-1/7 text-sm"
         >
-          Test Payment Success (Local)
+          
         </button>
       )}
     </div>

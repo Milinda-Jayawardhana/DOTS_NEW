@@ -24,7 +24,7 @@ export default function CollarType({ onClose, onSelectCollar }) {
   useEffect(() => {
     const fetchCollars = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/collars`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/collar`);
         if (response.data && Array.isArray(response.data.collars)) {
           setCollars(response.data.collars);
         } else {
@@ -49,7 +49,7 @@ export default function CollarType({ onClose, onSelectCollar }) {
     if (!editingCollar) return;
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/collars/${editingCollar._id}`,
+        `${import.meta.env.VITE_API_URL}/api/collar/${editingCollar._id}`,
         {
           name: editingCollar.name,
           price: editingCollar.price,
@@ -72,7 +72,7 @@ export default function CollarType({ onClose, onSelectCollar }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/collars/${id}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/collar/${id}`);
       if (response.status === 200) {
         setCollars((prev) => prev.filter((collar) => collar._id !== id));
         console.log("Collar deleted successfully");

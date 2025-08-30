@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import axios from "axios";
 import PreOrderUpdate from "../Components/PreOrderUpdate";
 import PayHereForm from "../Components/PayhereForm";
+import Tcollar from "../Components/Tcollar";
+import Tgsm from "../Components/Tmatgsm";
 
 export default function Shop() {
   const [popup, setPopup] = useState(null);
@@ -28,6 +30,8 @@ export default function Shop() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState(null);
+  const [selectedGsm, setSelectedGsm] = useState(null); // ✅ new state
+  const [selectedCollar, setSelectedCollar] = useState(null); // ✅ new state
 
   useEffect(() => {
     const fetchUserOrders = async () => {
@@ -68,6 +72,8 @@ export default function Shop() {
     if (selectedCount) total += selectedCount.price || 0;
     if (selectedMaterial) total += selectedMaterial.price || 0;
     if (selectedType) total += selectedType.price || 0;
+    if (selectedGsm) total += selectedGsm.price || 0; // ✅ include gsm
+    if (selectedCollar) total += selectedCollar.price || 0; // ✅ include collar
     selectedColours.forEach((c) => (total += c.price || 0));
     return total;
   };
@@ -101,32 +107,190 @@ export default function Shop() {
 
           {/* Selection Grid */}
 
-          <div className="grid gap-6 justify-items-center grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            <SelectionBox
-              label="Count"
-              imgSrc="/s3.png"
-              onClick={() => handlePopupOpen(1)}
-            />
-            <SelectionBox
-              label="Type"
-              imgSrc="/s5.png"
-              onClick={() => handlePopupOpen(5)}
-            />
-            <SelectionBox
-              label="Material"
-              imgSrc="/s2.png"
-              onClick={() => handlePopupOpen(2)}
-            />
-            <SelectionBox
-              label="Colours"
-              imgSrc="/s1.png"
-              onClick={() => handlePopupOpen(3)}
-            />
-            <SelectionBox
-              label="Sizes"
-              imgSrc="/s4.png"
-              onClick={() => handlePopupOpen(4)}
-            />
+          {/* XL Layout */}
+          <div className="hidden xl:block">
+            {/* First row - 5 items */}
+            <div className="grid grid-cols-5 gap-6 justify-items-center">
+              <SelectionBox
+                label="Count"
+                imgSrc="/s3.png"
+                onClick={() => handlePopupOpen(1)}
+              />
+              <SelectionBox
+                label="Type"
+                imgSrc="/s5.png"
+                onClick={() => handlePopupOpen(5)}
+              />
+              <SelectionBox
+                label="Material"
+                imgSrc="/s2.png"
+                onClick={() => handlePopupOpen(2)}
+              />
+              <SelectionBox
+                label="Colours"
+                imgSrc="/s1.png"
+                onClick={() => handlePopupOpen(3)}
+              />
+              <SelectionBox
+                label="Sizes"
+                imgSrc="/s4.png"
+                onClick={() => handlePopupOpen(4)}
+              />
+            </div>
+            {/* Second row - 2 items centered */}
+            <div className="flex justify-center gap-[150px] mt-16">
+              <SelectionBox
+                label="GSM"
+                imgSrc="/s7.png"
+                onClick={() => handlePopupOpen(6)}
+              />
+              <SelectionBox
+                label="Collar"
+                imgSrc="/s6.png"
+                onClick={() => handlePopupOpen(7)}
+              />
+            </div>
+          </div>
+
+          {/* LG Layout */}
+          <div className="hidden lg:block xl:hidden">
+            {/* First row - 4 items */}
+            <div className="grid grid-cols-4 gap-6 justify-items-center">
+              <SelectionBox
+                label="Count"
+                imgSrc="/s3.png"
+                onClick={() => handlePopupOpen(1)}
+              />
+              <SelectionBox
+                label="Type"
+                imgSrc="/s5.png"
+                onClick={() => handlePopupOpen(5)}
+              />
+              <SelectionBox
+                label="Material"
+                imgSrc="/s2.png"
+                onClick={() => handlePopupOpen(2)}
+              />
+              <SelectionBox
+                label="Colours"
+                imgSrc="/s1.png"
+                onClick={() => handlePopupOpen(3)}
+              />
+            </div>
+            {/* Second row - 3 items centered */}
+            <div className="flex justify-center gap-[80px] mt-16">
+              <SelectionBox
+                label="Sizes"
+                imgSrc="/s4.png"
+                onClick={() => handlePopupOpen(4)}
+              />
+              <SelectionBox
+                label="GSM"
+                imgSrc="/s7.png"
+                onClick={() => handlePopupOpen(6)}
+              />
+              <SelectionBox
+                label="Collar"
+                imgSrc="/s6.png"
+                onClick={() => handlePopupOpen(7)}
+              />
+            </div>
+          </div>
+
+          {/* md Layout */}
+          <div className="hidden md:block lg:hidden xl:hidden">
+            {/* First row - 4 items */}
+            <div className="grid grid-cols-4 gap-6 justify-items-center">
+              <SelectionBox
+                label="Count"
+                imgSrc="/s3.png"
+                onClick={() => handlePopupOpen(1)}
+              />
+              <SelectionBox
+                label="Type"
+                imgSrc="/s5.png"
+                onClick={() => handlePopupOpen(5)}
+              />
+              <SelectionBox
+                label="Material"
+                imgSrc="/s2.png"
+                onClick={() => handlePopupOpen(2)}
+              />
+              <SelectionBox
+                label="Colours"
+                imgSrc="/s1.png"
+                onClick={() => handlePopupOpen(3)}
+              />
+            </div>
+            {/* Second row - 3 items centered */}
+            <div className="flex justify-center gap-[40px] mt-16">
+              <SelectionBox
+                label="Sizes"
+                imgSrc="/s4.png"
+                onClick={() => handlePopupOpen(4)}
+              />
+              <SelectionBox
+                label="GSM"
+                imgSrc="/s7.png"
+                onClick={() => handlePopupOpen(6)}
+              />
+              <SelectionBox
+                label="Collar"
+                imgSrc="/s6.png"
+                onClick={() => handlePopupOpen(7)}
+              />
+            </div>
+          </div>
+
+          {/* SM and XSM Layout */}
+          <div className="block sm:block md:hidden lg:hidden xl:hidden">
+            {/* First row - 2 items */}
+            <div className="grid grid-cols-2 gap-6 justify-items-center">
+              <SelectionBox
+                label="Count"
+                imgSrc="/s3.png"
+                onClick={() => handlePopupOpen(1)}
+              />
+              <SelectionBox
+                label="Type"
+                imgSrc="/s5.png"
+                onClick={() => handlePopupOpen(5)}
+              />
+            </div>
+            {/* Second row - 2 items */}
+            <div className="grid grid-cols-2 gap-6 justify-items-center mt-6">
+              <SelectionBox
+                label="Material"
+                imgSrc="/s2.png"
+                onClick={() => handlePopupOpen(2)}
+              />
+              <SelectionBox
+                label="Colours"
+                imgSrc="/s1.png"
+                onClick={() => handlePopupOpen(3)}
+              />
+            </div>
+            {/* Third row - 2 items */}
+            <div className="grid grid-cols-2 gap-6 justify-items-center mt-6">
+              <SelectionBox
+                label="Sizes"
+                imgSrc="/s4.png"
+                onClick={() => handlePopupOpen(4)}
+              />
+              <SelectionBox
+                label="GSM"
+                imgSrc="/s7.png"
+                onClick={() => handlePopupOpen(6)}
+              />
+            </div>
+            {/* Fourth row - 1 item centered */}
+            <div className="flex justify-center gap-6 mt-6">
+              <SelectionBox
+                label="Collar"
+                imgSrc="/s6.png"
+                onClick={() => handlePopupOpen(7)}
+              />
+            </div>
           </div>
 
           <div className="mt-8 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 rounded-2xl shadow-xl p-6 border border-gray-700 backdrop-blur-md flex flex-col lg:flex-row justify-between gap-20 items-stretch">
@@ -136,33 +300,33 @@ export default function Shop() {
                 <span className="text-3xl">🛒</span> Selected Items
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-5 ">
-                {/* Count */}
-                <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
-                  <span className="font-semibold text-white">Count:</span>
-                  <span
-                    className={`text-blue-300 ${
-                      !selectedCount && "italic opacity-60"
-                    }`}
-                  >
-                    {selectedCount ? selectedCount.name : "Select..."}
-                  </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="col-span-1 sm:col-span-2 flex flex-col sm:flex-row gap-3">
+                  {/* Count */}
+                  <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
+                    <span className="font-semibold text-white">Count:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        !selectedCount && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedCount ? selectedCount.name : "Select..."}
+                    </span>
+                  </div>
+                  {/* Material */}
+                  <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
+                    <span className="font-semibold text-white">Material:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        !selectedMaterial && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedMaterial ? selectedMaterial.name : "Select..."}
+                    </span>
+                  </div>
                 </div>
-
-                {/* Material */}
-                <div className="bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition flex-1">
-                  <span className="font-semibold text-white">Material:</span>
-                  <span
-                    className={`text-blue-300 ${
-                      !selectedMaterial && "italic opacity-60"
-                    }`}
-                  >
-                    {selectedMaterial ? selectedMaterial.name : "Select..."}
-                  </span>
-                </div>
-
                 {/* Type + Colours */}
-                <div className="col-span-1 sm:col-span-2 flex flex-col lg:flex-row gap-3">
+                <div className="col-span-1 sm:col-span-2 flex flex-col sm:flex-row gap-3">
                   <div className="flex-1 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
                     <span className="font-semibold text-white">Type:</span>
                     <span
@@ -183,6 +347,33 @@ export default function Shop() {
                       {selectedColours.length > 0
                         ? selectedColours.map((c) => c.name).join(", ")
                         : "Select..."}
+                    </span>
+                  </div>
+                </div>
+
+                {/* GSM + Collar */}
+                <div className="col-span-1 sm:col-span-2 flex flex-col sm:flex-row gap-3">
+                  {/* GSM */}
+                  <div className="flex-1 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
+                    <span className="font-semibold text-white">GSM:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        !selectedGsm && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedGsm ? selectedGsm.name : "Select..."}
+                    </span>
+                  </div>
+
+                  {/* Collar */}
+                  <div className="flex-1 bg-gray-900 rounded-lg px-4 py-2 flex items-center gap-2 shadow hover:shadow-lg transition">
+                    <span className="font-semibold text-white">Collar:</span>
+                    <span
+                      className={`text-blue-300 ${
+                        !selectedCollar && "italic opacity-60"
+                      }`}
+                    >
+                      {selectedCollar ? selectedCollar.name : "Select..."}
                     </span>
                   </div>
                 </div>
@@ -229,6 +420,8 @@ export default function Shop() {
                     setSelectedColours([]);
                     setSelectedSizes([]);
                     setSelectedType(null);
+                    setSelectedGsm(null);
+                    setSelectedCollar(null);
                   }}
                 >
                   <span className="text-xl">🔄</span> Reset
@@ -309,55 +502,69 @@ export default function Shop() {
                           {order.orderStatus}
                         </span>
                       </p>
-                      {order.orderStatus === "Confirmed" && (
-                        <PayHereForm
-                          amount={750 * (order.tshirtDetails?.quantity || 1)}
-                          name={order.customerName}
-                          contact={order.telephone}
-                          orderId={order.orderId || order._id}
-                          onPaymentSuccess={async () => {
-                            alert("✅ Payment successful!");
-                            try {
-                              const token = localStorage.getItem("token");
-                              await axios.put(
-                                `${import.meta.env.VITE_API_URL}/api/order/${
-                                  order._id
-                                }/advanced`,
-                                {
-                                  paymentInfo: {
-                                    amount:
-                                      750 *
-                                      (order.tshirtDetails?.quantity || 1),
-                                    provider: "PayHere",
-                                    transactionId: order.orderId || order._id, // fallback
+                      {order.orderStatus === "Confirmed" &&
+                        !order.advancedPayment?.paid && (
+                          <PayHereForm
+                            amount={750 * (order.tshirtDetails?.quantity || 1)}
+                            name={order.customerName}
+                            contact={order.telephone}
+                            orderId={order.orderId || order._id}
+                            onPaymentSuccess={async () => {
+                              alert("✅ Payment successful!");
+                              try {
+                                const token = localStorage.getItem("token");
+                                await axios.put(
+                                  `${import.meta.env.VITE_API_URL}/api/order/${
+                                    order._id
+                                  }/advanced`,
+                                  {
+                                    paymentInfo: {
+                                      amount:
+                                        750 *
+                                        (order.tshirtDetails?.quantity || 1),
+                                      provider: "PayHere",
+                                      transactionId: order.orderId || order._id, // fallback
+                                    },
                                   },
-                                },
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
+                                  {
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                  }
+                                );
 
-                              // 🔄 Refresh orders list
-                              const res = await axios.get(
-                                `${import.meta.env.VITE_API_URL}/api/my-orders`,
-                                {
-                                  headers: { Authorization: `Bearer ${token}` },
-                                }
-                              );
-                              setOrders(res.data.data);
-                            } catch (err) {
-                              console.error(
-                                "❌ Failed to update advanced payment:",
-                                err
-                              );
-                              alert(
-                                "Payment succeeded, but failed to update order update."
-                              );
-                            }
-                          }}
-                          onError={(msg) => alert("❌ Payment error: " + msg)}
-                        />
-                      )}
+                                // 🔄 Refresh orders list
+                                const res = await axios.get(
+                                  `${
+                                    import.meta.env.VITE_API_URL
+                                  }/api/my-orders`,
+                                  {
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                  }
+                                );
+                                setOrders(res.data.data);
+                              } catch (err) {
+                                console.error(
+                                  "❌ Failed to update advanced payment:",
+                                  err
+                                );
+                                alert(
+                                  "Payment succeeded, but failed to update order update."
+                                );
+                              }
+                            }}
+                            onError={(msg) => alert("❌ Payment error: " + msg)}
+                          />
+                        )}
+                      {(order.orderStatus === "Confirmed" ||
+                        order.orderStatus === "Processing") &&
+                        order.advancedPayment?.paid && (
+                          <p className="text-yellow-300 font-semibold text-center text-[12px]">
+                            Advanced payment done. Order processing…
+                          </p>
+                        )}
                     </div>
                   </div>
                 ))}
@@ -560,6 +767,15 @@ export default function Shop() {
               <Ttype
                 onClose={handlePopupClose}
                 onSelectType={setSelectedType}
+              />
+            )}
+            {popup === 6 && (
+              <Tgsm onClose={handlePopupClose} onSelectGsm={setSelectedGsm} />
+            )}
+            {popup === 7 && (
+              <Tcollar
+                onClose={handlePopupClose}
+                onSelectCollar={setSelectedCollar}
               />
             )}
           </div>

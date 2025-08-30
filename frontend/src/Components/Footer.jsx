@@ -1,8 +1,25 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import { FaFacebook, FaWhatsapp } from 'react-icons/fa';
+import { Link } from "react-router-dom";
+import { FaFacebook, FaWhatsapp } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Footer() {
+export default function Footer({ scrollToDesigns }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleDesignClick = (e) => {
+    e.preventDefault();
+
+    if (location.pathname === "/") {
+      // ✅ already on Home, just scroll
+      if (scrollToDesigns) {
+        scrollToDesigns();
+      }
+    } else {
+      // ✅ navigate to Home and pass state that we want to scroll
+      navigate("/", { state: { scrollTo: "designs" } });
+    }
+  };
   return (
     <div className="py-10 text-white bg-blue-950/20">
       <div className="flex justify-center mb-6">
@@ -16,57 +33,108 @@ export default function Footer() {
         </div>
       </div>
 
-
-      <div className=" h-[20px] flex justify-center items-center gap-2"> 
-         <div className="h-full w-[30%] flex items-center">
-         <div className=" h-[1px] bg-gray-600 w-full "></div>
-         </div>
+      <div className=" h-[20px] flex justify-center items-center gap-2">
+        <div className="h-full w-[30%] flex items-center">
+          <div className=" h-[1px] bg-gray-600 w-full "></div>
+        </div>
         <div className=" flex gap-[5px] ">
-          <a href="https://www.facebook.com/share/1FGkZx9XNY/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400">
+          <a
+            href="https://www.facebook.com/share/1FGkZx9XNY/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-400"
+          >
             <FaFacebook />
           </a>
-          <a href="https://wa.me/94705966400" target="_blank" rel="noopener noreferrer" className="hover:text-green-400">
+          <a
+            href="https://wa.me/94705966400"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-green-400"
+          >
             <FaWhatsapp />
           </a>
         </div>
         <div className=" h-[1px] bg-gray-600 w-[30%]"></div>
-        
       </div>
-
 
       {/* Bottom Section: Links and Logo */}
       <div className=" flex justify-center items-center mt-8 px-8 text-sm lg:gap-[100px] md:gap-[70px] sm:gap-[40px]">
         <div className=" hidden sm:flex gap-3 lg:gap-7 md:gap-5 sm:gap-3 xl:gap-10 w-[40%] justify-end">
-          <a href="#" className="hover:text-gray-400"> About Us   </a>
-          <a href="/contact" className="hover:text-gray-400"> Contact   </a>
-          <a href="/shop" className="hover:text-gray-400"> Shop   </a>
-          <a href="#" className="hover:text-gray-400"> Helps   </a>
-
+          <a href="#" className="hover:text-gray-400">
+            {" "}
+            About Us{" "}
+          </a>
+          <a href="/contact" className="hover:text-gray-400">
+            {" "}
+            Contact{" "}
+          </a>
+          <a href="/shop" className="hover:text-gray-400">
+            {" "}
+            Shop{" "}
+          </a>
+          <a href="#" className="hover:text-gray-400">
+            {" "}
+            Helps{" "}
+          </a>
         </div>
         <div className="flex flex-col items-center ">
           <h2 className="text-2xl font-bold">DOTS</h2>
           <div className="flex gap-5 sm:hidden">
-            <a href="#" className="hover:text-gray-400"> About Us   </a>
-            <a href="/contact" className="hover:text-gray-400"> Contact   </a>
-            <a href="/shop" className="hover:text-gray-400"> Shop   </a>
-            <a href="#" className="hover:text-gray-400"> Helps   </a>
-            
+            <a href="#" className="hover:text-gray-400">
+              {" "}
+              About Us{" "}
+            </a>
+            <a href="/contact" className="hover:text-gray-400">
+              {" "}
+              Contact{" "}
+            </a>
+            <a href="/shop" className="hover:text-gray-400">
+              {" "}
+              Shop{" "}
+            </a>
+            <a href="#" className="hover:text-gray-400">
+              {" "}
+              Helps{" "}
+            </a>
           </div>
           <div className="flex gap-3 sm:hidden">
-            <a href="#" className="hover:text-gray-400">Products</a>
-            <a href="#" className="hover:text-gray-400">Designs</a>
-            <a href="#" className="hover:text-gray-400">Suport</a>
+            <a href="#" className="hover:text-gray-400">
+              Products
+            </a>
+            <a
+              onClick={handleDesignClick}
+              className="cursor-pointer hover:text-gray-400"
+            >
+              Designs
+            </a>
+
+            <a href="#" className="hover:text-gray-400">
+              Suport
+            </a>
           </div>
         </div>
         <div className=" hidden sm:flex lg:gap-7 md:gap-5 sm:gap-3 gap-3 w-[40%] justify-start">
-          <a href="#" className="hover:text-gray-400">Products</a>
-          <a href="#" className="hover:text-gray-400">Designs</a>
-          <a href="#" className="hover:text-gray-400">Suport</a>
+          <a href="#" className="hover:text-gray-400">
+            Products
+          </a>
+          <a
+            onClick={handleDesignClick}
+            className="cursor-pointer hover:text-gray-400"
+          >
+            Designs
+          </a>
+
+          <a href="#" className="hover:text-gray-400">
+            Suport
+          </a>
         </div>
       </div>
-        <div className="flex justify-center pt-5">
-        <p className=" text-[12px] md:text-sm font-light text-white/50">Copyright &copy; 2024 DOTS. All Rights Reserved. </p>
-        </div>
+      <div className="flex justify-center pt-5">
+        <p className=" text-[12px] md:text-sm font-light text-white/50">
+          Copyright &copy; 2024 DOTS. All Rights Reserved.{" "}
+        </p>
+      </div>
     </div>
-  )
+  );
 }

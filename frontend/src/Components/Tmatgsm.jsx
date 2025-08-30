@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
-export default function Tgsm({ onClose, onSelectMaterial }) {
-  const [selectedMaterial, setSelectedMaterial] = useState(null);
-  const [materials, setMaterials] = useState([]);
+export default function Tmatgsm({ onClose, onSelectGsm }) {
+  const [selectedGsm, setSelectedGsm] = useState(null);
+  const [gsmList, setGsmList] = useState([]);
   const [role, setRole] = useState(null);
-  const [editingMaterial, setEditingMaterial] = useState(null);
+  const [editingGsm, setEditingGsm] = useState(null);
 
   // decode token for role
   useEffect(() => {
@@ -22,70 +22,63 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
     }
   }, []);
 
-  // fetch materials (with GSM + price)
+  // fetch GSM options
   useEffect(() => {
-    const fetchMaterials = async () => {
+    const fetchGsmList = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/materials`
-        );
-        if (response.data && Array.isArray(response.data.materials)) {
-          setMaterials(response.data.materials);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/gsm`);
+        if (response.data && Array.isArray(response.data.gsmList)) {
+          setGsmList(response.data.gsmList);
         } else {
-          console.error("Material data is not in expected format", response.data);
+          console.error("Unexpected GSM response format:", response.data);
         }
       } catch (error) {
-        console.error("Error fetching materials:", error);
+        console.error("Error fetching GSM:", error);
       }
     };
-    fetchMaterials();
+    fetchGsmList();
   }, []);
 
-  const handleMaterialChange = (material) => {
-    setSelectedMaterial(material);
+  const handleGsmChange = (gsm) => {
+    setSelectedGsm(gsm);
   };
 
-  const startEditing = (material) => {
-    setEditingMaterial({ ...material });
+  const startEditing = (gsm) => {
+    setEditingGsm({ ...gsm });
   };
 
   const handleUpdate = async () => {
-    if (!editingMaterial) return;
+    if (!editingGsm) return;
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/materials/${editingMaterial._id}`,
+        `${import.meta.env.VITE_API_URL}/api/gsm/${editingGsm._id}`,
         {
-          name: editingMaterial.name,
-          gsm: editingMaterial.gsm,
-          price: editingMaterial.price,
+          name: editingGsm.name,
+          price: editingGsm.price,
         }
       );
 
       if (response.status === 200) {
-        setMaterials((prev) =>
-          prev.map((mat) =>
-            mat._id === editingMaterial._id ? editingMaterial : mat
-          )
+        setGsmList((prev) =>
+          prev.map((g) => (g._id === editingGsm._id ? editingGsm : g))
         );
-        setEditingMaterial(null);
-        console.log("Material updated successfully");
+        setEditingGsm(null);
+        console.log("GSM updated successfully");
       }
     } catch (error) {
-      console.error("Error updating material:", error);
+      console.error("Error updating GSM:", error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/materials/${id}`
-      );
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/gsm/${id}`);
       if (response.status === 200) {
-        setMaterials((prev) => prev.filter((mat) => mat._id !== id));
-        console.log("Material deleted successfully");
+        setGsmList((prev) => prev.filter((g) => g._id !== id));
+        console.log("GSM deleted successfully");
       }
     } catch (error) {
-      console.error("Error deleting material:", error);
+      console.error("Error deleting GSM:", error);
     }
   };
 
@@ -100,34 +93,34 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
         </button>
 
         <p className="text-center text-black font-semibold text-[20px] pb-7">
-          Select a Material (GSM)
+          Select GSM
         </p>
 
         <div className="flex flex-col items-start gap-3">
-          {materials.length > 0 ? (
-            materials.map((material) => (
-              <div key={material._id} className="flex items-center space-x-2">
+          {gsmList.length > 0 ? (
+            gsmList.map((gsm) => (
+              <div key={gsm._id} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  name="materialSelection"
-                  checked={selectedMaterial?._id === material._id}
-                  onChange={() => handleMaterialChange(material)}
+                  name="gsmSelection"
+                  checked={selectedGsm?._id === gsm._id}
+                  onChange={() => handleGsmChange(gsm)}
                   className="w-4 h-4 cursor-pointer"
                 />
                 <span className="text-black">
-                  {material.name} ({material.gsm} GSM) - Rs.{material.price}
+                  {gsm.name} GSM
                 </span>
 
                 {role === "admin" && (
                   <div className="ml-4">
                     <button
-                      onClick={() => startEditing(material)}
+                      onClick={() => startEditing(gsm)}
                       className="px-2 py-1 text-white bg-blue-500 rounded"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(material._id)}
+                      onClick={() => handleDelete(gsm._id)}
                       className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
                     >
                       Delete
@@ -137,30 +130,19 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
               </div>
             ))
           ) : (
-            <p className="text-gray-500">No materials available.</p>
+            <p className="text-gray-500">No GSM options available.</p>
           )}
         </div>
 
-        {editingMaterial && (
+        {editingGsm && (
           <div className="flex items-center mt-4 space-x-2">
             <input
-              type="text"
-              value={editingMaterial.name}
-              onChange={(e) =>
-                setEditingMaterial({
-                  ...editingMaterial,
-                  name: e.target.value,
-                })
-              }
-              className="px-2 py-1 text-black border rounded"
-            />
-            <input
               type="number"
-              value={editingMaterial.gsm}
+              value={editingGsm.name}
               onChange={(e) =>
-                setEditingMaterial({
-                  ...editingMaterial,
-                  gsm: Number(e.target.value),
+                setEditingGsm({
+                  ...editingGsm,
+                  name: e.target.value,
                 })
               }
               className="w-20 px-2 py-1 text-black border rounded"
@@ -168,10 +150,10 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
             />
             <input
               type="number"
-              value={editingMaterial.price}
+              value={editingGsm.price}
               onChange={(e) =>
-                setEditingMaterial({
-                  ...editingMaterial,
+                setEditingGsm({
+                  ...editingGsm,
                   price: Number(e.target.value),
                 })
               }
@@ -185,7 +167,7 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
               Save
             </button>
             <button
-              onClick={() => setEditingMaterial(null)}
+              onClick={() => setEditingGsm(null)}
               className="px-2 py-1 text-white bg-gray-500 rounded"
             >
               Cancel
@@ -197,10 +179,10 @@ export default function Tgsm({ onClose, onSelectMaterial }) {
           <button
             className="px-3 py-2 text-white bg-gray-700 rounded"
             onClick={() => {
-              onSelectMaterial(selectedMaterial);
+              onSelectGsm(selectedGsm);
               onClose();
             }}
-            disabled={!selectedMaterial}
+            disabled={!selectedGsm}
           >
             Confirm
           </button>
